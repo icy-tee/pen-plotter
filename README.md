@@ -26,11 +26,11 @@ It has 9 commands (1 non-specific and 4 per-axis):
 
 ## Simulation
 
-Simulating the current state of the project is straightforward. Ensure Verilator is installed and run the Makefile. The simulation itself should be crossplatform but 'ppcsender' is unix-based and for Windows would
+Simulating the current state of the project is straightforward. Ensure Verilator is installed and run the Makefile. The simulation itself should be crossplatform but `ppcsender` is unix-based and for Windows would
 require a port for the named pipes.
 
-'./ppcsender.c' is the program that parses user commands into their byte representations (in LE) and sends them over USB for actual use, or over named pipes for the simulation.
-It runs with either 'act [dev]' where the default is /dev/TTYUSB0 or 'sim [read] [write]' that defaults to 'uart_rx' and 'uart_tx' respectively.
+`./ppcsender.c` is the program that parses user commands into their byte representations (in LE) and sends them over USB for actual use, or over named pipes for the simulation.
+It runs with either `act [dev]` where the default is /dev/TTYUSB0 or `sim [read] [write]`` that defaults to 'uart_rx' and 'uart_tx' respectively.
 
 ## Synthesis
 
