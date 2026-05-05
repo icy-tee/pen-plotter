@@ -3,6 +3,10 @@
 .clangd
 veridian.yml
 
+# rtl backups
+rtl/*.bak
+rtl/platform/*.bak
+
 # quartus output
 syn/output_files/
 syn/dni/
