@@ -4,12 +4,12 @@
 veridian.yml
 
 # quartus output
-./syn/output_files/
-./syn/dni/
-./syn/ip/RESET_RELEASE/
-./syn/qdb/
+syn/output_files/
+syn/dni/
+syn/ip/RESET_RELEASE/
+syn/qdb/
 
 # verilator output
-./sim/obj_dir/
-./sim/ppcsender
+sim/obj_dir/
+sim/ppcsender
 
