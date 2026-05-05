@@ -7,6 +7,7 @@ veridian.yml
 syn/output_files/
 syn/dni/
 syn/ip/RESET_RELEASE/
+syn/ip/.qsys_edit/
 syn/qdb/
 
 # verilator output
