@@ -87,24 +87,27 @@ assign HDMI_I2S0   = 1'bz;
 assign FPGA_I2C_SCL = 1'bz;
 assign FPGA_I2C_SDA = 1'bz;
 
+// GPIO: quadrature input
+assign quad_y[0] = GPIO_D[1];
+assign quad_y[1] = GPIO_D[3];
+assign quad_x[0] = GPIO_D[5];
+assign quad_x[1] = GPIO_D[7];
 // GPIO: motor pins driven, rest high-Z
-assign GPIO_D[ 1: 0] = 2'dz;
-assign GPIO_D[2]     = motor_x_w[1]; // in2
-assign GPIO_D[3]     = 1'bz;
-assign GPIO_D[4]     = motor_x_w[0]; // in1
-assign GPIO_D[5]     = 1'bz;
-assign GPIO_D[6]     = motor_y_w[1]; // in2
-assign GPIO_D[7]     = 1'bz;
-assign GPIO_D[8]     = motor_y_w[0]; // in1
-assign GPIO_D[9]     = 1'bz;
-assign quad_x[1]     = GPIO_D[10]; // in2
-assign GPIO_D[11]     = 1'bz;
-assign quad_x[0]     = GPIO_D[12]; // in2
-assign GPIO_D[13]     = 1'bz;
-assign quad_y[1]     = GPIO_D[14]; // in2
-assign GPIO_D[15]     = 1'bz;
-assign quad_y[0]     = GPIO_D[16]; // in2
-assign GPIO_D[35: 17] = 18'dz;
+assign GPIO_D[11] = motor_x_w[1];
+assign GPIO_D[13] = motor_x_w[0];
+assign GPIO_D[15] = motor_y_w[1];
+assign GPIO_D[17] = motor_y_w[0];
+
+assign GPIO_D[0] = 1'bz;
+assign GPIO_D[2] = 1'bz;
+assign GPIO_D[4] = 1'bz;
+assign GPIO_D[6] = 1'bz;
+assign GPIO_D[8] = 1'bz;
+assign GPIO_D[10: 9] = 2'dz;
+assign GPIO_D[12] = 1'bz;
+assign GPIO_D[14] = 1'bz;
+assign GPIO_D[16] = 1'bz;
+assign GPIO_D[35: 18] = 18'dz;
 
 RESET_RELEASE u_reset_release(
   .ninit_done(config_done)

@@ -8,10 +8,10 @@
 
 struct QuadInjector {
     enum STATE { AB_ZERO, AB, BA, AB_ONE} state = AB_ZERO;
-    int ticks = 0, ticks_for_next = 12500000;
+    int ticks = 0, ticks_for_next = 0;
 
-    void tick_forward() {
-        if (++ticks == ticks_for_next) {
+    void tick_forward(int ticks_for_next ) {
+        if (++ticks >= ticks_for_next) {
             ticks = 0;
 
             switch (state) {
@@ -24,8 +24,8 @@ struct QuadInjector {
     }
 
     
-    void tick_backward() {
-        if (++ticks == ticks_for_next) {
+    void tick_backward(int ticks_for_next) {
+        if (++ticks >= ticks_for_next) {
             ticks = 0;
 
             switch (state) {
@@ -172,6 +172,9 @@ int main(int argc, const char **argv) {
     auto dutyx = pptop->pp_top->x_duty;
     auto dutyy = pptop->pp_top->y_duty;
 
+    auto setpointx = pptop->pp_top->setpoint_x;
+    auto setpointy = pptop->pp_top->setpoint_y;
+
     char buf;
     while (!contextp->gotFinish()) {
         bool has_bool = false;
@@ -180,15 +183,18 @@ int main(int argc, const char **argv) {
             if (has_bool) { printf("injecting byte: 0x%02x\n", (uint8_t)buf); fflush(stdout); }
         }
 
+        int ticks_for_x = (dutyx / 255.0) * 2000; 
+        int ticks_for_y = (dutyy / 255.0) * 2000; 
+
         switch (modex) {
-            case 1: quadx.tick_forward(); break;
-            case 2: quadx.tick_backward(); break;
+            case 1: quadx.tick_forward(ticks_for_x); break;
+            case 2: quadx.tick_backward(ticks_for_x); break;
             default: break;
         }
         
         switch (modey) {
-            case 1: quady.tick_forward(); break;
-            case 2: quady.tick_backward(); break;
+            case 1: quady.tick_forward(ticks_for_y); break;
+            case 2: quady.tick_backward(ticks_for_y); break;
             default: break;
         }        
 
@@ -205,6 +211,10 @@ int main(int argc, const char **argv) {
               printf("x: mode=%d duty=%d\n", pptop->pp_top->x_dir, pptop->pp_top->x_duty); fflush(stdout);
         }
 
+        if (setpointx != pptop->pp_top->setpoint_x || setpointy != pptop->pp_top->setpoint_y) {
+            printf("x: sp = %d, y: sp = %d\n", (int32_t)pptop->pp_top->setpoint_x, (int32_t)pptop->pp_top->setpoint_y);
+        }
+
         if (modey != pptop->pp_top->y_dir || dutyy != pptop->pp_top->y_duty) {
               printf("y: mode=%d duty=%d\n", pptop->pp_top->y_dir, pptop->pp_top->y_duty); fflush(stdout);
         }
@@ -213,6 +223,8 @@ int main(int argc, const char **argv) {
         modey = pptop->pp_top->y_dir;
         dutyx = pptop->pp_top->x_duty;
         dutyy = pptop->pp_top->y_duty;
+        setpointx = pptop->pp_top->setpoint_x;
+        setpointy = pptop->pp_top->setpoint_y;
     }
 
     delete pptop;

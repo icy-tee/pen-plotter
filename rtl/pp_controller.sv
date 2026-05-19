@@ -1,9 +1,24 @@
 
 import pp_pkg::*;
 
+`define VERSION 2
+
 typedef enum logic [1:0] {
      FETCH, EXECUTE
 } pp_controller_state_e;
+
+typedef struct packed {
+    q32_t setpoint_x; // 0x0
+    q32_t setpoint_y; // 0x4
+    q16_16_t Kp; // 0x08
+    q16_16_t Kd; // 0x0C
+    logic[31:0] sample_rate; // 0x10
+} pp_register_t;
+
+typedef struct packed {
+    logic [7:0] offset;
+    logic [31:0] data;
+} pp_set_pkt_t;
 
 module pp_controller #(
     int CLOCK_RATE = 50_000_000,
@@ -17,11 +32,13 @@ module pp_controller #(
     input int signed tickX_i,
     input int signed tickY_i,
 
-    output md_mode_e modeX,
-    output logic [7:0] dutyX,
+    output logic quad_rst_n_o,
 
-    output md_mode_e modeY,
-    output logic [7:0] dutyY,
+    output q32_t setpointX_o,
+    output q32_t setpointY_o,
+    output q16_16_t Kp_o,
+    output q16_16_t Kd_o,
+    output logic [31:0] sample_rate_o,
 
     output logic [7:0] tx_data_o,
     output logic tx_valid_o,
@@ -29,42 +46,43 @@ module pp_controller #(
 
     output logic next_data_o
 );
+    logic streaming_n;
     int stream_timer;
 
     pp_controller_state_e state;
-    md_mode_e next_modeX, next_modeY;
-    logic is_x_command, is_y_command, is_write;
+    pp_register_t registers;
     logic [7:0] data_latch;
 
-    logic needs_duty;
-    logic x_needs_duty, y_needs_duty;
+    logic [2:0] load_counter;
+    pp_set_pkt_t load_info;
+    logic load, get, tx_writing;
 
-    logic tx_writing;
-    int buf_len, idx, next_buf_len;
-    logic [7:0] buffer [BUFFER_SIZE], next_buffer[BUFFER_SIZE];
+    int buf_len, idx;
+    logic [7:0] buffer [BUFFER_SIZE];
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             state <= FETCH;
+            registers <= '0;
             data_latch <= '0;
-            dutyX <= '0;
-            dutyY <= '0;
-            x_needs_duty <= '0;
-            y_needs_duty <= '0;
+            streaming_n <= '0;
+            load <= '0;
+            get <= '0;
+            load_counter <= '0;
             next_data_o <= '0;
             stream_timer <= 0;
-            modeX <= COAST;
-            modeY <= COAST;
             idx <= '0;
             tx_writing <= '0;
             tx_valid_o <= '0;
             tx_flush_o <= '0;
+            quad_rst_n_o <= '1;
         end else begin
             next_data_o <= '0;
+            quad_rst_n_o <= '1;
             tx_valid_o <= '0;
             tx_flush_o <= '0;
 
-            if (stream_timer == CLOCK_RATE / 4) begin
+            if (stream_timer == CLOCK_RATE / 4 && !streaming_n) begin
                 if (!tx_writing) begin
                     buffer[0] <= 8'd1;
                     buffer[1] <= tickX_i[7:0];
@@ -82,7 +100,7 @@ module pp_controller #(
                 end
                 stream_timer <= 0;
             end else
-                stream_timer <= stream_timer + 1;
+                stream_timer <= streaming_n ? 0 : stream_timer + 1;
 
             if (tx_writing) begin
                 tx_data_o <= buffer[idx];
@@ -95,73 +113,77 @@ module pp_controller #(
                 end
             end
 
-            case (state)
+            unique case (state)
                 FETCH: begin
-                    if (!data_empty_i) begin
-                        data_latch <= data_i;
-                        next_data_o <= '1;
-                        state <= EXECUTE;
+                    if (!next_data_o & !data_empty_i) begin
+                        if (load) begin
+                            load_counter <= load_counter + 1;
+                            next_data_o <= '1;
+                            case (load_counter)
+                                'd0: load_info.offset <= data_i;
+                                'd1: load_info.data[7:0] <= data_i;
+                                'd2: load_info.data[15:8] <= data_i;
+                                'd3: load_info.data[23:16] <= data_i;
+                                'd4: begin
+                                    load <= '0;
+                                    load_counter <= 'd0;
+                                    case (load_info.offset)
+                                        'd0: registers.setpoint_x <= $signed({data_i, load_info.data[23:0]});
+                                        'd1: registers.setpoint_y <= $signed({data_i, load_info.data[23:0]});
+                                        'd2: registers.Kp <= $signed({data_i, load_info.data[23:0]});
+                                        'd3: registers.Kd <= $signed({data_i, load_info.data[23:0]});
+                                        'd4: registers.sample_rate <= {data_i, load_info.data[23:0]};
+                                        default:
+                                            ;
+                                    endcase 
+                                end
+                                default:
+                                    ;
+                            endcase
+                            state <= FETCH;
+                        end else if (get) begin
+                            get <= '0;
+                        end else begin
+                            data_latch <= data_i;
+                            next_data_o <= '1;
+                            state <= EXECUTE;
+                        end
                     end
                 end
                 EXECUTE: begin
-                    if (x_needs_duty) begin
-                        dutyX <= data_latch;
-                        x_needs_duty <= '0;
-                        state <= FETCH;
-                    end else if (y_needs_duty) begin
-                        dutyY <= data_latch;
-                        y_needs_duty <= '0;
-                        state <= FETCH;
-                    end else begin
-                        if (is_x_command) begin
-                            modeX <= next_modeX;
-                            state <= FETCH;
+                    case (instr_e'(data_latch))
+                        RST: begin // should pulse reset for quadratue decoders
+                            registers.setpoint_x <= 0;
+                            registers.setpoint_y <= 0;
+                            quad_rst_n_o <= '0;
                         end
-                        if (is_y_command) begin
-                            modeY <= next_modeY;
-                            state <= FETCH;
-                        end
-                        if (is_write && !tx_writing) begin
+                        STS: begin
                             tx_writing <= '1;
-                            buf_len <= next_buf_len;
-                            buffer <= next_buffer;
-                            state <= FETCH;
+                            buf_len <= 2;
+                            buffer[0] <= 'd0;
+                            buffer[1] <= 'd2;
                         end
-
-                        x_needs_duty <= needs_duty & is_x_command;
-                        y_needs_duty <= needs_duty & is_y_command;
-                    end
+                        SET: begin
+                            load <= '1;
+                            load_counter <= 'd0;
+                        end
+                        GET: begin
+                            get <= '1;
+                        end
+                        STR: streaming_n <= !streaming_n;
+                        default:
+                            ;
+                    endcase
+                    state <= FETCH;
                 end
-                default: begin end
             endcase
         end
     end
 
-    always_comb begin
-        next_modeX = COAST; next_modeY = COAST;
-        needs_duty = '0;
-        is_x_command = '0; is_y_command = '0; is_write = '0;
-        next_buffer = '{default: '0};
-        next_buf_len = 0;
-        case (instr_e'(data_latch))
-            RST: begin
-                    next_modeX = COAST; next_modeY = COAST;
-                    is_x_command = '1; is_y_command = '1;
-            end
-            FWDX: begin  next_modeX = FORWARD; needs_duty = '1; is_x_command = '1; end
-            REVX: begin  next_modeX = REVERSE; needs_duty = '1; is_x_command = '1; end
-            CSTX: begin  next_modeX = COAST; is_x_command = '1; end
-            BRKX: begin  next_modeX = BRAKE; is_x_command = '1; end
-            FWDY: begin  next_modeY = FORWARD; needs_duty = '1; is_y_command = '1; end
-            REVY: begin  next_modeY = REVERSE; needs_duty = '1; is_y_command = '1; end
-            CSTY: begin  next_modeY = COAST; is_y_command = '1; end
-            BRKY: begin  next_modeY = BRAKE; is_y_command = '1; end
-            STS: begin
-                is_write = '1;
-                next_buf_len = 2; next_buffer[0] = 8'd0; next_buffer[1] = 8'd1;
-            end
-            default: begin end
-        endcase
-    end
+    assign setpointX_o = registers.setpoint_x;
+    assign setpointY_o = registers.setpoint_y;
+    assign Kp_o = registers.Kp;
+    assign Kd_o = registers.Kd;
+    assign sample_rate_o = registers.sample_rate;
 
 endmodule

@@ -15,6 +15,24 @@ void read_exact(int fd, size_t n, void *buf) {
     }
 }
 
+void send_set_command_u32(int file, uint8_t loc) {
+    char *tok = strtok(NULL, " ");
+    uint8_t command = 2;
+    uint32_t bytes = atoi(tok);
+    write(file, &command, 1);
+    write(file, &loc, 1);
+    write(file, &bytes, 4);
+}
+
+void send_set_command_q16_16(int file, uint8_t loc) {
+    char *tok = strtok(NULL, " ");
+    uint8_t command = 2;
+    int32_t q = (int32_t)(atof(tok) * 65536.0);
+    write(file, &command, 1);
+    write(file, &loc, 1);
+    write(file, &q, 4);
+}
+
 int main(int argc, char **argv) {
     if (argc == 1) {
         printf("usage: ./sender (sim [out] [in] | act [port])\n");
@@ -93,42 +111,25 @@ int main(int argc, char **argv) {
             } else if (strcmp(tok, "sts") == 0) {
                 command = 0;
                 write(out_fd, &command , 1);
-            } else if (strcmp(tok, "fx") == 0) {
-                command = 2;
-                char *tok = strtok(NULL, " ");
-                duty = atoi(tok);
-                write(out_fd, &command, 1);
-                write(out_fd, &duty, 1);
-            } else if (strcmp(tok, "rx") == 0) {
-                command = 3;
-                char *tok = strtok(NULL, " ");
-                duty = atoi(tok);
-                write(out_fd, &command, 1);
-                write(out_fd, &duty, 1);
-            } else if (strcmp(tok, "bx") == 0) {
+            } else if (strcmp(tok, "rst") == 0) {
+                command = 1;
+                write(out_fd, &command, 1);  
+            } else if (strcmp(tok, "setx") == 0) {
+                send_set_command_u32(out_fd, 0);
+            } else if (strcmp(tok, "sety") == 0) {
+                send_set_command_u32(out_fd, 1);
+            } else if (strcmp(tok, "setKp") == 0) {
+                send_set_command_q16_16(out_fd, 2);
+            } else if (strcmp(tok, "setKd") == 0) {
+                send_set_command_q16_16(out_fd, 3);
+            } else if (strcmp(tok, "setRd") == 0) {
+                send_set_command_u32(out_fd, 4);
+            } else if (strcmp(tok, "go") == 0) {
+                send_set_command_u32(out_fd, 0);
+                send_set_command_u32(out_fd, 1);  
+            } else if (strcmp(tok, "str") == 0) {
                 command = 4;
-                write(out_fd, &command , 1);
-            } else if (strcmp(tok, "cx") == 0) {
-                command = 5;
-                write(out_fd, &command , 1);
-            } else if (strcmp(tok, "fy") == 0) {
-                command = 6;
-                char *tok = strtok(NULL, " ");
-                duty = atoi(tok);
                 write(out_fd, &command, 1);
-                write(out_fd, &duty, 1);
-            } else if (strcmp(tok, "ry") == 0) {
-                command = 7;
-                char *tok = strtok(NULL, " ");
-                duty = atoi(tok);
-                write(out_fd, &command, 1);
-                write(out_fd, &duty, 1);
-            } else if (strcmp(tok, "by") == 0) {
-                command = 8;
-                write(out_fd, &command , 1);
-            } else if (strcmp(tok, "cy") == 0) {
-                command = 9;
-                write(out_fd, &command , 1);
             }
         }
     }

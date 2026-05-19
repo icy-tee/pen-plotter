@@ -15,14 +15,16 @@ This is the synthesized hardware and later firmware for a closed-loop pen plotte
 ## State
 
 Currently, it is a simple controller for my pen plotter rig that can drive all the inputs of a DRV8833 to get movement and read the output of quadrature encoders from the JGA25-371.
-It has 9 commands (1 non-specific and 4 per-axis):
+It has 4 working commands:
 ```
   STS - Status: sends OK packet with controller version
-  FWD(X|Y) $DUTY - Forward: sets whatever motor to FORWARD state with $DUTY value which ranges from 0-255 (0%-100%)
-  REV(X|Y) $DUTY - Reverse: sets motor to REVERSE with $DUTY value.
-  CST(X|Y) - Coast: sets motor to coast
-  BRK(X|Y) - Brake: sets motor to brake
+  RST - Reset: resets the quadrature counters and the setpoint values, keeps constants
+  STR - Stream: toggles the streaming mode that sends position packets
+  SET $REG: 1 byte $WORD: 4 bytes - Set: sets the corresponding register to the bytes sent with it.
 ```
+
+It currently has 5 4-byte long registers: `setpoint_x`, `setpoint_y`, `Kp`, `Kd`, and `sample_rate`. There will be
+per-axis proportional constants and the sample rate will likely become hardcoded but for now its for quicker testing.
 
 ## Simulation
 

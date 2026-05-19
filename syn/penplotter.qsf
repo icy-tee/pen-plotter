@@ -239,204 +239,205 @@ set_global_assignment -name POWER_APPLY_THERMAL_MARGIN ADDITIONAL
 set_global_assignment -name ON_CHIP_BITSTREAM_DECOMPRESSION OFF
 set_global_assignment -name EDA_TIME_SCALE "1 ps" -section_id eda_simulation
 set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[35] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[33] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[34] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to CLOCK0_50 -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to CLOCK1_50 -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX2[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX2[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX3[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CLK -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CKE -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[10] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[11] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[12] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_BA[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_BA[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[10] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[11] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[12] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[13] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[14] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[15] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[16] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[17] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[18] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[19] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[20] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[21] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[22] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[23] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[24] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[25] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[26] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[27] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[28] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[29] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[30] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[31] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CS_n -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_WE_n -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CAS_n -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_RAS_n -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_LRCLK -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_MCLK -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_SCLK -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "1.2-V" -to HDMI_TX_CLK -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_HS -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_VS -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[10] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[11] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[12] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[13] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[14] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[15] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[16] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[17] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[18] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[19] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[20] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[21] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[22] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[23] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_DE -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_INT -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_I2S0 -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_I2C_SCL -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_I2C_SDA -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_UART_TX -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_UART_RX -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[0] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[1] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[2] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[3] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[4] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[5] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[6] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[7] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[8] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[9] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[10] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[11] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[12] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[13] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[14] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[15] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[16] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[17] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[18] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[19] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[20] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[21] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[22] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[23] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[24] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[25] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[26] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[27] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[28] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[29] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[30] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[31] -entity penplotter_top
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[32] -entity penplotter_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[35] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[33] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[34] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to CLOCK0_50 -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to CLOCK1_50 -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to KEY[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to SW[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to LEDR[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX0[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX1[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HEX2[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX2[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX2[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to HEX3[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX3[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX4[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HEX5[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CLK -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CKE -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[10] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[11] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_ADDR[12] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_BA[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_BA[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[10] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[11] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[12] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[13] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[14] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[15] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[16] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[17] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[18] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[19] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[20] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[21] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[22] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[23] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[24] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[25] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[26] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[27] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[28] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[29] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[30] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQ[31] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CS_n -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_WE_n -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_CAS_n -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_RAS_n -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.8-V LVCMOS" -to DRAM_DQM[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_LRCLK -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_MCLK -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_SCLK -entity quartus_top
+set_instance_assignment -name IO_STANDARD "1.2-V" -to HDMI_TX_CLK -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_HS -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_VS -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[10] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[11] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[12] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[13] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[14] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[15] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[16] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[17] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[18] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[19] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[20] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[21] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[22] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_D[23] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_DE -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_TX_INT -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to HDMI_I2S0 -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_I2C_SCL -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_I2C_SDA -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_UART_TX -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to FPGA_UART_RX -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[0] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[1] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[2] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[3] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[4] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[5] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[6] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[7] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[8] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[9] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[10] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[11] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[12] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[13] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[14] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[15] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[16] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[17] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[18] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[19] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[20] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[21] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[22] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[23] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[24] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[25] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[26] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[27] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[28] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[29] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[30] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[31] -entity quartus_top
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[32] -entity quartus_top
+set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/pid_controller.sv
 set_global_assignment -name IP_FILE ip/RESET_RELEASE.ip
 set_global_assignment -name VERILOG_FILE ../rtl/platform/quartus_top.v
 set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/md_controller.sv
