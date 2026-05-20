@@ -1,3 +1,4 @@
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -15,19 +16,15 @@ void read_exact(int fd, size_t n, void *buf) {
     }
 }
 
-void send_set_command_u32(int file, uint8_t loc) {
-    char *tok = strtok(NULL, " ");
+void send_set_command_u32(int file, uint8_t loc, uint32_t val) {
     uint8_t command = 2;
-    uint32_t bytes = atoi(tok);
     write(file, &command, 1);
     write(file, &loc, 1);
-    write(file, &bytes, 4);
+    write(file, &val, 4);
 }
 
-void send_set_command_angle(int file, uint8_t loc) {
-    char *tok = strtok(NULL, " ");
+void send_set_command_angle(int file, uint8_t loc, float angle) {
     uint8_t command = 2;
-    float angle = atof(tok);
     angle *= 65535.0 / 180.0;
     uint32_t bytes = (uint32_t)angle;
     write(file, &command, 1);
@@ -35,10 +32,10 @@ void send_set_command_angle(int file, uint8_t loc) {
     write(file, &bytes, 4);
 }
 
-void send_set_command_q16_16(int file, uint8_t loc) {
+void send_set_command_q16_16(int file, uint8_t loc, float val) {
     char *tok = strtok(NULL, " ");
     uint8_t command = 2;
-    int32_t q = (int32_t)(atof(tok) * 65536.0);
+    int32_t q = (int32_t)(val * 65536.0);
     write(file, &command, 1);
     write(file, &loc, 1);
     write(file, &q, 4);
@@ -46,7 +43,7 @@ void send_set_command_q16_16(int file, uint8_t loc) {
 
 int main(int argc, char **argv) {
     if (argc == 1) {
-        printf("usage: ./sender (sim [out] [in] | act [port])\n");
+        printf("usage: ./rect (sim [out] [in] | act [port])\n");
         return 0;
     }
 
@@ -80,6 +77,26 @@ int main(int argc, char **argv) {
         return 0;
     }
 
+    int stability_pipe[2];
+    if (pipe(stability_pipe) == -1) {
+        goto end;
+    }
+
+    #define START_X (744*4)
+    #define START_Y (744*0)
+    #define LENGTH 744
+
+    struct { int32_t x; int32_t y; } positions[6] = {
+      [0] = {START_X, START_Y},
+      [1] = {START_X + LENGTH, START_Y},
+      [2] = {START_X + LENGTH, START_Y + LENGTH},
+      [3] = {START_X, START_Y + LENGTH},
+      [4] = {START_X, START_Y},
+      [5] = {0, 0},
+    };
+    size_t index = 0;
+    bool started = false;
+
     int proc = fork();
     bool running = true;
     if (proc == 0) {
@@ -92,64 +109,49 @@ int main(int argc, char **argv) {
                 case 0: {
                     uint8_t version;
                     read_exact(in_fd, 1, &version);
-                    printf("STATUS: OK... VERS %d\n", version);    
                     break;
                 }
-                case 1: {
-                    int32_t ticks;
-                    read_exact(in_fd, 4, &ticks);
-                    printf("X TICKS: %d %X\n", ticks, ticks);
-                    break;
-                }
+                case 1:
                 case 2: {
                     int32_t ticks;
                     read_exact(in_fd, 4, &ticks);
-                    printf("Y TICKS: %d %X\n", ticks, ticks);
                     break;
                 }
                 case 3: {
                     printf("STABLE!\n");
+                    uint8_t one = 1;
+                    write(stability_pipe[1], &one, 1);
                     break;        
                 }
             }
         }
     } else {
         while (running) {
-            char buffer[128];
-            fgets(buffer, sizeof(buffer), stdin);
+            if (index > 6) {
+                send_set_command_angle(out_fd, 5, 0);
+                break;
+            }
 
-            char *tok = strtok(buffer, " \n");
-            uint8_t command = 0;
-            uint8_t duty = 0;
-            if (strcmp(tok, "quit") == 0) {
-                running = false;
-            } else if (strcmp(tok, "sts") == 0) {
-                command = 0;
-                write(out_fd, &command , 1);
-            } else if (strcmp(tok, "rst") == 0) {
-                command = 1;
-                write(out_fd, &command, 1);  
-            } else if (strcmp(tok, "setx") == 0) {
-                send_set_command_u32(out_fd, 0);
-            } else if (strcmp(tok, "sety") == 0) {
-                send_set_command_u32(out_fd, 1);
-            } else if (strcmp(tok, "setKp") == 0) {
-                send_set_command_q16_16(out_fd, 2);
-            } else if (strcmp(tok, "setKd") == 0) {
-                send_set_command_q16_16(out_fd, 3);
-            } else if (strcmp(tok, "setRd") == 0) {
-                send_set_command_u32(out_fd, 4);
-            } else if (strcmp(tok, "servo") == 0) {
-                send_set_command_angle(out_fd, 5);  
-            } else if (strcmp(tok, "go") == 0) {
-                send_set_command_u32(out_fd, 0);
-                send_set_command_u32(out_fd, 1);  
-            } else if (strcmp(tok, "str") == 0) {
-                command = 4;
-                write(out_fd, &command, 1);
+            if (!started) {
+                send_set_command_angle(out_fd, 5, 90);
+                sleep(1);
+                send_set_command_u32(out_fd, 0, positions[index].x);
+                send_set_command_u32(out_fd, 1, positions[index].y);
+                index++;
+                started = true;
+            } else {
+                uint8_t msg = 0;
+                read(stability_pipe[0], &msg, 1);
+                if (msg == 1) {
+                    send_set_command_u32(out_fd, 0, positions[index].x);
+                    send_set_command_u32(out_fd, 1, positions[index].y);
+                    index++;
+                }
             }
         }
     }
+
+    end:
 
     if (out_fd == in_fd) {
         close(out_fd);

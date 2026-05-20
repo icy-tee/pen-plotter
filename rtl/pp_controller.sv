@@ -61,6 +61,7 @@ module pp_controller #(
     pp_set_pkt_t load_info;
     logic load, get, tx_writing;
 
+    logic stable_reported;
     logic [1:0] stable;
 
     int buf_len, idx;
@@ -72,7 +73,7 @@ module pp_controller #(
             registers <= '0;
             stable <= '0;
             data_latch <= '0;
-            streaming_n <= '0;
+            streaming_n <= '1;
             load <= '0;
             get <= '0;
             load_counter <= '0;
@@ -92,10 +93,11 @@ module pp_controller #(
             stable[0] <= stableX_i & stableY_i;
             stable[1] <= stable[0];
 
-            if (stable[0] && !stable[1]) begin
+            if (stable[0] && !stable[1] && !stable_reported) begin
                 buffer[0] <= 8'd3;
                 buf_len <= 1;
                 tx_writing <= '1;
+                stable_reported <= '1;
             end
 
             if (stream_timer == CLOCK_RATE / 4 && !streaming_n) begin
@@ -143,6 +145,10 @@ module pp_controller #(
                                 'd4: begin
                                     load <= '0;
                                     load_counter <= 'd0;
+
+                                    if (load_info.offset == 'd0 || load_info.offset == 'd1)
+                                        stable_reported <= '0;
+
                                     case (load_info.offset)
                                         'd0: registers.setpoint_x <= $signed({data_i, load_info.data[23:0]});
                                         'd1: registers.setpoint_y <= $signed({data_i, load_info.data[23:0]});
@@ -178,7 +184,7 @@ module pp_controller #(
                             tx_writing <= '1;
                             buf_len <= 2;
                             buffer[0] <= 'd0;
-                            buffer[1] <= 'd2;
+                            buffer[1] <= `VERSION;
                         end
                         SET: begin
                             load <= '1;

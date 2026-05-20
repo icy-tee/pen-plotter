@@ -3,7 +3,7 @@ import pp_pkg::*;
 
 module pid_controller #(
     int CLOCK_RATE = 50_000_000,
-    // int MARGIN_OF_ERROR = 40,
+    int MIN_PERIOD_FOR_STABILITY = 100_000,
     int BASE_PWM = 179 // =  255 * 0.70
 ) (
     input clk,
@@ -21,8 +21,9 @@ module pid_controller #(
     output logic [7:0] motor_duty_o
 );
 
-    q32_t pv_prev;
+    q32_t [1:0] pv_prev;
     logic[$clog2(CLOCK_RATE)-1:0] counter;
+    logic[$clog2(MIN_PERIOD_FOR_STABILITY)-1:0] stability_counter;
     logic[7:0] base_pwm;
 
     q32_t error;
@@ -35,24 +36,35 @@ module pid_controller #(
 
     assign error = setpoint_i - process_variable_i;
     assign p_term = 32'((64'(proportional_constant_i) * 64'(error)) >>> 16); // q32_t
-
-    assign delta = (process_variable_i - pv_prev) >>> sample_rate_i;
+    assign delta = (pv_prev[0] - pv_prev[1]) >>> sample_rate_i;
     assign d_term = 32'((64'(delta) * 64'(derivative_constant_i)) >>> 16);
 
     assign response = p_term - d_term;
-    assign stable_o = response == 0;
+
+    assign stable_o = (stability_counter == ($clog2(MIN_PERIOD_FOR_STABILITY))'(MIN_PERIOD_FOR_STABILITY - 1));
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
+            stability_counter <= 0;
             counter <= 0;
             pv_prev <= 0;
         end else begin
             if (counter == (26'd1 << sample_rate_i) - 1) begin
                 counter <= 0;
-                pv_prev <= process_variable_i;
+                pv_prev[0] <= process_variable_i;
+                pv_prev[1] <= pv_prev[0];
             end else begin
                 counter <= counter + 1;
             end
+
+            if (response == 0) begin
+                if (stability_counter == ($clog2(MIN_PERIOD_FOR_STABILITY))'(MIN_PERIOD_FOR_STABILITY - 1))
+                    ;
+                else stability_counter <= stability_counter + 1;
+            end else begin
+                stability_counter <= 0;
+            end
+
         end
     end
 
