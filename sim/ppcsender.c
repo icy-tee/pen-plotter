@@ -24,6 +24,17 @@ void send_set_command_u32(int file, uint8_t loc) {
     write(file, &bytes, 4);
 }
 
+void send_set_command_angle(int file, uint8_t loc) {
+    char *tok = strtok(NULL, " ");
+    uint8_t command = 2;
+    float angle = atof(tok);
+    angle *= 65535.0 / 180.0;
+    uint32_t bytes = (uint32_t)angle;
+    write(file, &command, 1);
+    write(file, &loc, 1);
+    write(file, &bytes, 4);
+}
+
 void send_set_command_q16_16(int file, uint8_t loc) {
     char *tok = strtok(NULL, " ");
     uint8_t command = 2;
@@ -96,6 +107,10 @@ int main(int argc, char **argv) {
                     printf("Y TICKS: %d %X\n", ticks, ticks);
                     break;
                 }
+                case 3: {
+                    //printf("STABLE!\n");
+                    break;        
+                }
             }
         }
     } else {
@@ -124,6 +139,8 @@ int main(int argc, char **argv) {
                 send_set_command_q16_16(out_fd, 3);
             } else if (strcmp(tok, "setRd") == 0) {
                 send_set_command_u32(out_fd, 4);
+            } else if (strcmp(tok, "servo") == 0) {
+                send_set_command_angle(out_fd, 5);  
             } else if (strcmp(tok, "go") == 0) {
                 send_set_command_u32(out_fd, 0);
                 send_set_command_u32(out_fd, 1);  

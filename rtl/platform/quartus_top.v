@@ -47,6 +47,7 @@ module quartus_top(
 
 wire [1:0] motor_x_w, motor_y_w;
 wire [1:0] quad_x, quad_y;
+wire servo;
 wire config_done;
 
 // LEDs off
@@ -92,11 +93,13 @@ assign quad_y[0] = GPIO_D[1];
 assign quad_y[1] = GPIO_D[3];
 assign quad_x[0] = GPIO_D[5];
 assign quad_x[1] = GPIO_D[7];
-// GPIO: motor pins driven, rest high-Z
+// GPIO: motor pins driven
 assign GPIO_D[11] = motor_x_w[1];
 assign GPIO_D[13] = motor_x_w[0];
 assign GPIO_D[15] = motor_y_w[1];
 assign GPIO_D[17] = motor_y_w[0];
+// GPIO: servo output, rest high-Z
+assign GPIO_D[19] = servo;
 
 assign GPIO_D[0] = 1'bz;
 assign GPIO_D[2] = 1'bz;
@@ -107,7 +110,8 @@ assign GPIO_D[10: 9] = 2'dz;
 assign GPIO_D[12] = 1'bz;
 assign GPIO_D[14] = 1'bz;
 assign GPIO_D[16] = 1'bz;
-assign GPIO_D[35: 18] = 18'dz;
+assign GPIO_D[18] = 1'bz;
+assign GPIO_D[35: 20] = 18'dz;
 
 RESET_RELEASE u_reset_release(
   .ninit_done(config_done)
@@ -121,7 +125,8 @@ pp_top u0_top(
       .quad_x(quad_x),
       .quad_y(quad_y),
       .motor_x(motor_x_w),
-      .motor_y(motor_y_w)
+      .motor_y(motor_y_w),
+      .servo(servo)
 );
 
 endmodule

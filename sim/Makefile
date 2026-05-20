@@ -6,7 +6,7 @@ VFLAGS := --cc --exe -j 0
 
 CPP_HARNESS := ./sim_main.cpp
 
-RTL_FILES = pp_pkg.sv uart_rx_fifo.sv uart_tx_fifo.sv quad_decoder.sv md_controller.sv pp_controller.sv pid_controller.sv pp_top.sv
+RTL_FILES = pp_pkg.sv uart_rx_fifo.sv uart_tx_fifo.sv quad_decoder.sv md_controller.sv pp_controller.sv pid_controller.sv pwm.sv servo_pwm.sv pp_top.sv
 SRCS := \
 	$(addprefix $(RTL)/, $(RTL_FILES))
 
@@ -17,6 +17,9 @@ sim:
 
 ppcsender:
 	gcc -o ppcsender ppcsender.c
+
+pwm_sim:
+	$(VERILATOR) --binary --timing --assert -j 0 -Wall -Wno-fatal --top-module pwm_tb $(RTL)/pwm.sv -o pwm_tb_sim
 
 clean:
 	rm -rf ./obj_dir ppcsender

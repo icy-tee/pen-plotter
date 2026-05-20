@@ -14,25 +14,18 @@ module md_controller #(
     output logic in1,
     output logic in2
 );
-    localparam int Period = CLOCK_RATE / PWM_FREQ;
-
-    int counter;
-    int threshold;
 
     logic pwm_out;
 
-    assign threshold = duty * Period / 256;
-    assign pwm_out = (counter < threshold);
-
-    always_ff @(posedge clk or negedge rst_n) begin
-        if (!rst_n) begin
-            counter <= 0;
-        end else if (counter == Period - 1) begin
-            counter <= 0;
-        end else begin
-            counter <= counter + 1;
-        end
-    end
+    pwm #(
+        .CLOCK_RATE(CLOCK_RATE),
+        .PWM_FREQ(PWM_FREQ)
+    ) u_pwm (
+        .clk(clk),
+        .rst_n(rst_n),
+        .duty_i(duty),
+        .pwm_o(pwm_out)
+    );
 
     always_comb begin
         case(mode)

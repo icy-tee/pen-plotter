@@ -16,6 +16,7 @@ module pid_controller #(
     input q32_t process_variable_i, // in ticks
     input q32_t setpoint_i,         // in ticks
 
+    output stable_o,
     output md_mode_e motor_dir_o,
     output logic [7:0] motor_duty_o
 );
@@ -30,6 +31,8 @@ module pid_controller #(
     q32_t d_term;
     q32_t response;
 
+    assign base_pwm = 8'(BASE_PWM);
+
     assign error = setpoint_i - process_variable_i;
     assign p_term = 32'((64'(proportional_constant_i) * 64'(error)) >>> 16); // q32_t
 
@@ -37,8 +40,7 @@ module pid_controller #(
     assign d_term = 32'((64'(delta) * 64'(derivative_constant_i)) >>> 16);
 
     assign response = p_term - d_term;
-
-    assign base_pwm = 8'(BASE_PWM);
+    assign stable_o = response == 0;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -59,7 +61,7 @@ module pid_controller #(
         automatic logic [7:0] contrib = (magnitude < 32'd1024) ? 8'(magnitude >> 2) : 8'd255;
         automatic logic [8:0] val = 9'(base_pwm) + 9'(contrib);
 
-        motor_duty_o = val < 8'd255 ? val[7:0] : 8'd255;
+        motor_duty_o = val < 9'd255 ? val[7:0] : 8'd255;
 
         if (response < 0) motor_dir_o = FORWARD;
         else if (response > 0)  motor_dir_o = REVERSE;
@@ -68,5 +70,6 @@ module pid_controller #(
             motor_duty_o = 0;
         end
     end
+
 
 endmodule

@@ -10,13 +10,15 @@ module pp_top (
     input uart_rx,
     output uart_tx,
     output [1:0] motor_x,
-    output [1:0] motor_y
+    output [1:0] motor_y,
+    output servo
 );
 
 logic quad_rst_n;
 
 q32_t tick_pos_x, tick_pos_y, setpoint_x /* verilator public */, setpoint_y /* verilator public */;
 q16_16_t kp, kd;
+logic [15:0] servo_angle;
 logic [31:0] sample_rate;
 
 logic fifo_read, fifo_empty;
@@ -25,6 +27,7 @@ logic [7:0] fifo_data;
 logic tx_flush, tx_valid, tx_busy;
 logic [7:0] tx_data;
 
+logic stable_x, stable_y;
 md_mode_e x_dir /* verilator public */, y_dir /* verilator public */;
 logic [7:0] x_duty /* verilator public */, y_duty /* verilator public */;
 
@@ -55,6 +58,8 @@ pp_controller u_pp_controller (
     .rst_n        (rst_n),
     .data_i       (fifo_data),
     .data_empty_i (fifo_empty),
+    .stableX_i    (stable_x),
+    .stableY_i    (stable_y),
     .tickX_i      (tick_pos_x),
     .tickY_i      (tick_pos_y),
     .quad_rst_n_o (quad_rst_n),
@@ -63,6 +68,7 @@ pp_controller u_pp_controller (
     .Kp_o         (kp),
     .Kd_o         (kd),
     .sample_rate_o(sample_rate),
+    .servo_angle_o (servo_angle),
     .tx_data_o    (tx_data),
     .tx_valid_o   (tx_valid),
     .tx_flush_o   (tx_flush),
@@ -78,6 +84,7 @@ pid_controller u_pid_x(
     .sample_rate_i          (sample_rate[25:0]),
     .process_variable_i     (tick_pos_x),
     .setpoint_i             (setpoint_x),
+    .stable_o               (stable_x),
     .motor_dir_o            (x_dir),
     .motor_duty_o           (x_duty)
 );
@@ -91,6 +98,7 @@ pid_controller u_pid_y(
     .sample_rate_i          (sample_rate[25:0]),
     .process_variable_i     (tick_pos_y),
     .setpoint_i             (setpoint_y),
+    .stable_o               (stable_y),
     .motor_dir_o            (y_dir),
     .motor_duty_o           (y_duty)
 );
@@ -115,6 +123,13 @@ md_controller u_y_motor_controller(
     .in2(motor_y[1])
 );
 
+
+servo_pwm u_servo (
+    .clk    (clk),
+    .rst_n  (rst_n),
+    .angle_i(servo_angle),
+    .pwm_o  (servo)
+);
 
 quad_decoder u_x_quad(
     .clk(clk),

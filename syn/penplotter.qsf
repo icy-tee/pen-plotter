@@ -437,6 +437,8 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[29] -entity 
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[30] -entity quartus_top
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[31] -entity quartus_top
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[32] -entity quartus_top
+set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/servo_pwm.sv
+set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/pwm.sv
 set_global_assignment -name SYSTEMVERILOG_FILE ../rtl/pid_controller.sv
 set_global_assignment -name IP_FILE ip/RESET_RELEASE.ip
 set_global_assignment -name VERILOG_FILE ../rtl/platform/quartus_top.v

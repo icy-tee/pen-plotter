@@ -13,6 +13,7 @@ typedef struct packed {
     q16_16_t Kp; // 0x08
     q16_16_t Kd; // 0x0C
     logic[31:0] sample_rate; // 0x10
+    logic[31:0] servo_angle;
 } pp_register_t;
 
 typedef struct packed {
@@ -29,8 +30,10 @@ module pp_controller #(
     input [7:0] data_i,
     input data_empty_i,
 
-    input int signed tickX_i,
-    input int signed tickY_i,
+    input logic stableX_i,
+    input logic stableY_i,
+    input q32_t tickX_i,
+    input q32_t tickY_i,
 
     output logic quad_rst_n_o,
 
@@ -39,6 +42,7 @@ module pp_controller #(
     output q16_16_t Kp_o,
     output q16_16_t Kd_o,
     output logic [31:0] sample_rate_o,
+    output logic [15:0] servo_angle_o, // 0 -> 0, 65535 -> 180
 
     output logic [7:0] tx_data_o,
     output logic tx_valid_o,
@@ -57,6 +61,8 @@ module pp_controller #(
     pp_set_pkt_t load_info;
     logic load, get, tx_writing;
 
+    logic [1:0] stable;
+
     int buf_len, idx;
     logic [7:0] buffer [BUFFER_SIZE];
 
@@ -64,6 +70,7 @@ module pp_controller #(
         if (!rst_n) begin
             state <= FETCH;
             registers <= '0;
+            stable <= '0;
             data_latch <= '0;
             streaming_n <= '0;
             load <= '0;
@@ -81,6 +88,15 @@ module pp_controller #(
             quad_rst_n_o <= '1;
             tx_valid_o <= '0;
             tx_flush_o <= '0;
+
+            stable[0] <= stableX_i & stableY_i;
+            stable[1] <= stable[0];
+
+            if (stable[0] && !stable[1]) begin
+                buffer[0] <= 8'd3;
+                buf_len <= 1;
+                tx_writing <= '1;
+            end
 
             if (stream_timer == CLOCK_RATE / 4 && !streaming_n) begin
                 if (!tx_writing) begin
@@ -133,9 +149,10 @@ module pp_controller #(
                                         'd2: registers.Kp <= $signed({data_i, load_info.data[23:0]});
                                         'd3: registers.Kd <= $signed({data_i, load_info.data[23:0]});
                                         'd4: registers.sample_rate <= {data_i, load_info.data[23:0]};
+                                        'd5: registers.servo_angle <= {data_i, load_info.data[23:0]};
                                         default:
                                             ;
-                                    endcase 
+                                    endcase
                                 end
                                 default:
                                     ;
@@ -185,5 +202,6 @@ module pp_controller #(
     assign Kp_o = registers.Kp;
     assign Kd_o = registers.Kd;
     assign sample_rate_o = registers.sample_rate;
+    assign servo_angle_o = registers.servo_angle[15:0];
 
 endmodule
