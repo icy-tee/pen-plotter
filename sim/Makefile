@@ -10,13 +10,16 @@ RTL_FILES = pp_pkg.sv uart_rx_fifo.sv uart_tx_fifo.sv quad_decoder.sv md_control
 SRCS := \
 	$(addprefix $(RTL)/, $(RTL_FILES))
 
-all: sim ppcsender
+all: sim ppcsender pwm_sim
 
 sim:
 	$(VERILATOR) $(VFLAGS) --build $(CPP_HARNESS) $(SRCS) --top-module pp_top
 
 ppcsender:
 	gcc -o ppcsender ppcsender.c
+
+shape:
+	gcc -o shape shape.c -DRECTANGLE -lm
 
 pwm_sim:
 	$(VERILATOR) --binary --timing --assert -j 0 -Wall -Wno-fatal --top-module pwm_tb $(RTL)/pwm.sv -o pwm_tb_sim

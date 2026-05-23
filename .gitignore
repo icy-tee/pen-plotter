@@ -17,4 +17,5 @@ syn/qdb/
 # verilator output
 sim/obj_dir/
 sim/ppcsender
+sim/rect
 
