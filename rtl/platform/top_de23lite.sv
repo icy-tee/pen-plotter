@@ -1,5 +1,5 @@
 
-module quartus_top(
+module top_de23lite(
       input              CLOCK0_50,
       input              CLOCK1_50,
 
@@ -113,7 +113,7 @@ assign GPIO_D[16] = 1'bz;
 assign GPIO_D[18] = 1'bz;
 assign GPIO_D[35: 20] = 18'dz;
 
-RESET_RELEASE u_reset_release(
+reset_release u_reset_release(
   .ninit_done(config_done)
 );
 

@@ -1,5 +1,4 @@
 
-
 import pp_pkg::*;
 
 module pp_top (
@@ -16,7 +15,7 @@ module pp_top (
 
 logic quad_rst_n;
 
-q32_t tick_pos_x, tick_pos_y, setpoint_x /* verilator public */, setpoint_y /* verilator public */;
+i32_t tick_pos_x, tick_pos_y, setpoint_x /* verilator public */, setpoint_y /* verilator public */;
 q16_16_t kp, kd;
 logic [15:0] servo_angle;
 logic [31:0] sample_rate;

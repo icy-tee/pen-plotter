@@ -1,5 +1,7 @@
 
+// verilator lint_off IMPORTSTAR
 import pp_pkg::*;
+// verilator lint_on IMPORTSTAR
 
 `define VERSION 2
 
@@ -8,8 +10,8 @@ typedef enum logic [1:0] {
 } pp_controller_state_e;
 
 typedef struct packed {
-    q32_t setpoint_x; // 0x0
-    q32_t setpoint_y; // 0x4
+    i32_t setpoint_x; // 0x0
+    i32_t setpoint_y; // 0x4
     q16_16_t Kp; // 0x08
     q16_16_t Kd; // 0x0C
     logic[31:0] sample_rate; // 0x10
@@ -32,13 +34,13 @@ module pp_controller #(
 
     input logic stableX_i,
     input logic stableY_i,
-    input q32_t tickX_i,
-    input q32_t tickY_i,
+    input i32_t tickX_i,
+    input i32_t tickY_i,
 
     output logic quad_rst_n_o,
 
-    output q32_t setpointX_o,
-    output q32_t setpointY_o,
+    output i32_t setpointX_o,
+    output i32_t setpointY_o,
     output q16_16_t Kp_o,
     output q16_16_t Kd_o,
     output logic [31:0] sample_rate_o,

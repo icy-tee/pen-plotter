@@ -1,21 +1,16 @@
-.venv
+
 #lsp
 .clangd
+compile_flags.txt
+.slang/
 veridian.yml
 
 # rtl backups
 rtl/*.bak
 rtl/platform/*.bak
 
-# quartus output
-syn/output_files/
-syn/dni/
-syn/ip/RESET_RELEASE/
-syn/ip/.qsys_edit/
-syn/qdb/
+# fusesoc output
+build/
 
-# verilator output
-sim/obj_dir/
-sim/ppcsender
-sim/rect
-
+# venv
+.venv/

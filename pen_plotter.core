@@ -8,6 +8,9 @@ filesets:
       - pulp:riscv:debug_module
     files:
       - rtl/pp_pkg.sv
+      - rtl/pp_top.sv
+      - rtl/pp_controller.sv
+      - rtl/quad_decoder.sv
       - rtl/pwm.sv
       - rtl/servo_pwm.sv
       - rtl/uart_tx_fifo.sv
@@ -18,7 +21,9 @@ filesets:
   
   files_de23lite:
     files:
-      - rtl/platform/top_de23lite.sv
+      - rtl/platform/top_de23lite.sv: { file_type: systemVerilogSource }
+      - ip/reset_release.ip: { file_type: IP }
+      - constraints/de23lite_assignments.tcl: {file_type: tclSource }
     file_type: systemVerilogSource
 
   files_verilator:
@@ -28,45 +33,51 @@ filesets:
 
   # add constraints for quartus/de23lite
 
-  parameters:
-  # mayb add parameters for IMEM
+parameters:
+  PRIM_DEFAULT_IMPL:
+    datatype: str
+    paramtype: vlogdefine
+    description: Primtives implementation to use
+#mayb add parameters for IMEM
 
-  targets:
-    default: &default_target
-      filesets:
-        - rtl
-    synth:
-      <<: *default_target
-      default_tool: quartus
-      filesets_append:
-        -  files_de23lite
-      toplevel: top_de23lite
-      tools:
-        quartus:
-          family: "Agilex 3"
-          device: "A3CZ135BB18AE7S" 
-      #parameters:
-       # - PRIM_DEFAULT_IMPL=
-    sim:
-      <<: *default_target
-      default_tool: verilator
-      filesets_append:
-        - files_verilator
-      toplevel: top_verilator
-      tools:
-        verilator:
-          mode: cc
-          verilator_options:
-            - '--trace'
-            - '--trace-fst'
-            - '--trace-structs'
-            - '--trace-params'
-            - '--trace-max-array 1024'
-            - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
-            - '-LDFLAGS "-pthread -lutil -lelf"'
-            - "-Wall"
-            - 'Wwarn-IMPERFECTSCH'
-            - "--unroll-count 72"
-          parameters
-            - PRIM_DEFAULT_IMPL=prim_pkg::ImplGeneric
-    
+targets:
+  default: &default_target
+    filesets:
+      - rtl
+  synth:
+    <<: *default_target
+    default_tool: quartus
+    filesets_append:
+      -  files_de23lite
+    toplevel: top_de23lite
+    tools:
+      quartus:
+        family: "Agilex 3"
+        device: "A3CZ135BB18AE7S" 
+    #parameters:
+     # - PRIM_DEFAULT_IMPL=
+  sim:
+    <<: *default_target
+    default_tool: verilator
+    filesets_append:
+      - files_verilator
+    toplevel: top_verilator
+    parameters:
+      - PRIM_DEFAULT_IMPL=prim_pkg::ImplGeneric
+    tools:
+      verilator:
+        mode: cc
+        verilator_options:
+          - '--trace'
+          - '--trace-fst'
+          - '--trace-structs'
+          - '--trace-params'
+          - '--trace-max-array 1024'
+          - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
+          - '-LDFLAGS "-pthread -lutil -lelf"'
+          - "-Wall"
+          - "-Wno-UNUSED"
+          - "-Wno-UNDRIVEN"
+          - "-Wno-DECLFILENAME"
+          - "--unroll-count 72"
+  

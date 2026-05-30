@@ -1,5 +1,7 @@
 
+// verilator lint_off IMPORTSTAR
 import pp_pkg::*;
+// verilator lint_on IMPORTSTAR
 
 module pid_controller #(
     int CLOCK_RATE = 50_000_000,
@@ -13,29 +15,29 @@ module pid_controller #(
     input q16_16_t derivative_constant_i,
     input logic[$clog2(CLOCK_RATE)-1:0] sample_rate_i, // todo: rename
 
-    input q32_t process_variable_i, // in ticks
-    input q32_t setpoint_i,         // in ticks
+    input i32_t process_variable_i, // in ticks
+    input i32_t setpoint_i,         // in ticks
 
     output stable_o,
     output md_mode_e motor_dir_o,
     output logic [7:0] motor_duty_o
 );
 
-    q32_t [1:0] pv_prev;
+    i32_t [1:0] pv_prev;
     logic[$clog2(CLOCK_RATE)-1:0] counter;
     logic[$clog2(MIN_PERIOD_FOR_STABILITY)-1:0] stability_counter;
     logic[7:0] base_pwm;
 
-    q32_t error;
-    q32_t delta;
-    q32_t p_term;
-    q32_t d_term;
-    q32_t response;
+    i32_t error;
+    i32_t delta;
+    i32_t p_term;
+    i32_t d_term;
+    i32_t response;
 
     assign base_pwm = 8'(BASE_PWM);
 
     assign error = setpoint_i - process_variable_i;
-    assign p_term = 32'((64'(proportional_constant_i) * 64'(error)) >>> 16); // q32_t
+    assign p_term = 32'((64'(proportional_constant_i) * 64'(error)) >>> 16); // i32_t
     assign delta = (pv_prev[0] - pv_prev[1]) >>> sample_rate_i;
     assign d_term = 32'((64'(delta) * 64'(derivative_constant_i)) >>> 16);
 

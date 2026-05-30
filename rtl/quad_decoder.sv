@@ -1,5 +1,6 @@
 
-import pp_pkg::*;
+
+import pp_pkg::i32_t;
 
 typedef enum logic [1:0] {
     AB_ZERO, A_LEADS_B, AB_ONE, B_LEADS_A
@@ -11,13 +12,13 @@ module quad_decoder(
     input A_i,
     input B_i,
 
-    output q32_t tick_position
+    output i32_t tick_position
 );
     logic [1:0] A_i_latch, B_i_latch;
 
     quad_state_e state;
     quad_state_e next_state;
-    q32_t tick_val;
+    i32_t tick_val;
 
     always_ff @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin

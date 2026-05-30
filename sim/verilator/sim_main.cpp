@@ -1,6 +1,6 @@
 
-#include "obj_dir/Vpp_top.h"
-#include "obj_dir/Vpp_top_pp_top.h"
+#include "Vtop_verilator.h"
+#include "Vtop_verilator_top_verilator.h"
 
 #include <verilated.h>
 #include <stdio.h>
@@ -135,7 +135,7 @@ struct UARTDecoder {
 };
 
 
-void tick(Vpp_top *instance, int cycles) {
+void tick(Vtop_verilator *instance, int cycles) {
     for (int i = 0; i < cycles; i++) {
         instance->clk = 0;
         instance->eval();
@@ -153,7 +153,7 @@ int main(int argc, const char **argv) {
     int output = open("uart_tx", O_RDWR | O_NONBLOCK);
     printf("input fd=%d  output fd=%d\n", input, output); fflush(stdout);
 
-    Vpp_top *pptop = new Vpp_top{contextp};
+    Vtop_verilator *pptop = new Vtop_verilator{contextp};
     UARTDecoder uart_tx;
     UARTInjector uart_rx;
     QuadInjector quadx;
@@ -167,13 +167,13 @@ int main(int argc, const char **argv) {
     pptop->rst_n = 1;
     tick(pptop, 2);
 
-    auto modex = pptop->pp_top->x_dir;
-    auto modey = pptop->pp_top->y_dir;
-    auto dutyx = pptop->pp_top->x_duty;
-    auto dutyy = pptop->pp_top->y_duty;
+    auto modex = pptop->top_verilator->x_dir;
+    auto modey = pptop->top_verilator->y_dir;
+    auto dutyx = pptop->top_verilator->x_duty;
+    auto dutyy = pptop->top_verilator->y_duty;
 
-    auto setpointx = pptop->pp_top->setpoint_x;
-    auto setpointy = pptop->pp_top->setpoint_y;
+    auto setpointx = pptop->top_verilator->setpoint_x;
+    auto setpointy = pptop->top_verilator->setpoint_y;
 
     char buf;
     while (!contextp->gotFinish()) {
@@ -207,24 +207,24 @@ int main(int argc, const char **argv) {
 
         tick(pptop, 1);
 
-        if (modex != pptop->pp_top->x_dir || dutyx != pptop->pp_top->x_duty) {
-              printf("x: mode=%d duty=%d\n", pptop->pp_top->x_dir, pptop->pp_top->x_duty); fflush(stdout);
+        if (modex != pptop->top_verilator->x_dir || dutyx != pptop->top_verilator->x_duty) {
+              printf("x: mode=%d duty=%d\n", pptop->top_verilator->x_dir, pptop->top_verilator->x_duty); fflush(stdout);
         }
 
-        if (setpointx != pptop->pp_top->setpoint_x || setpointy != pptop->pp_top->setpoint_y) {
-            printf("x: sp = %d, y: sp = %d\n", (int32_t)pptop->pp_top->setpoint_x, (int32_t)pptop->pp_top->setpoint_y);
+        if (setpointx != pptop->top_verilator->setpoint_x || setpointy != pptop->top_verilator->setpoint_y) {
+            printf("x: sp = %d, y: sp = %d\n", (int32_t)pptop->top_verilator->setpoint_x, (int32_t)pptop->top_verilator->setpoint_y);
         }
 
-        if (modey != pptop->pp_top->y_dir || dutyy != pptop->pp_top->y_duty) {
-              printf("y: mode=%d duty=%d\n", pptop->pp_top->y_dir, pptop->pp_top->y_duty); fflush(stdout);
+        if (modey != pptop->top_verilator->y_dir || dutyy != pptop->top_verilator->y_duty) {
+              printf("y: mode=%d duty=%d\n", pptop->top_verilator->y_dir, pptop->top_verilator->y_duty); fflush(stdout);
         }
 
-        modex = pptop->pp_top->x_dir;
-        modey = pptop->pp_top->y_dir;
-        dutyx = pptop->pp_top->x_duty;
-        dutyy = pptop->pp_top->y_duty;
-        setpointx = pptop->pp_top->setpoint_x;
-        setpointy = pptop->pp_top->setpoint_y;
+        modex = pptop->top_verilator->x_dir;
+        modey = pptop->top_verilator->y_dir;
+        dutyx = pptop->top_verilator->x_duty;
+        dutyy = pptop->top_verilator->y_duty;
+        setpointx = pptop->top_verilator->setpoint_x;
+        setpointy = pptop->top_verilator->setpoint_y;
     }
 
     delete pptop;
