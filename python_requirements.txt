@@ -1,0 +1,4 @@
+
+fusesoc == 2.4.3
+
+hjson

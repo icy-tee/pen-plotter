@@ -1,0 +1,20 @@
+Copyright (c) 2026 icy-tee. All rights reserved.
+
+This software and associated source files (the "Software") are proprietary
+and confidential. No license, express or implied, is granted to any person
+to use, copy, modify, merge, publish, distribute, sublicense, or sell copies
+of the Software without the prior written permission of the copyright holder.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+----------------------------------------------------------------------------
+THIRD-PARTY COMPONENTS
+
+This repository includes components derived from lowRISC and the OpenTitan
+project (for example, "vendor.py" and the contents of the "vendor/"
+directory). Those files are licensed under the Apache License, Version 2.0,
+and are NOT covered by the proprietary terms above. Each such file carries an
+"SPDX-License-Identifier: Apache-2.0" header identifying its license. The
+full text of the Apache License 2.0 is provided in the file LICENSE-APACHE.

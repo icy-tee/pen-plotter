@@ -1,0 +1,16 @@
+{
+	name: "lowrisc_ip",
+	target_dir: "lowrisc_ip",
+
+	upstream: {
+		url: "https://github.com/lowRISC/opentitan"
+		rev: "master"
+	}
+
+	mapping: [
+		{from: "hw/ip/prim", to: "ip/prim"},
+		{from: "hw/ip/prim_generic", to: "ip/prim_generic"},
+
+		{from: "hw/lint", to: "lint"},
+	]
+}

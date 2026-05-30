@@ -1,0 +1,72 @@
+CAPI=2:
+name: "icytee:plotter:soc"
+description: "SoC implementing features necessary to support closed-loop control over a pen plotter"
+filesets:
+  rtl:
+    depend:
+      - lowrisc:ibex:ibex_top
+      - pulp:riscv:debug_module
+    files:
+      - rtl/pp_pkg.sv
+      - rtl/pwm.sv
+      - rtl/servo_pwm.sv
+      - rtl/uart_tx_fifo.sv
+      - rtl/uart_rx_fifo.sv
+      - rtl/md_controller.sv
+      - rtl/pid_controller.sv
+    file_type: systemVerilogSource
+  
+  files_de23lite:
+    files:
+      - rtl/platform/top_de23lite.sv
+    file_type: systemVerilogSource
+
+  files_verilator:
+    files:
+      - sim/verilator/top_verilator.sv: { file_type: systemVerilogSource }
+      - sim/verilator/sim_main.cpp: { file_type: cppSource }
+
+  # add constraints for quartus/de23lite
+
+  parameters:
+  # mayb add parameters for IMEM
+
+  targets:
+    default: &default_target
+      filesets:
+        - rtl
+    synth:
+      <<: *default_target
+      default_tool: quartus
+      filesets_append:
+        -  files_de23lite
+      toplevel: top_de23lite
+      tools:
+        quartus:
+          family: "Agilex 3"
+          device: "A3CZ135BB18AE7S" 
+      #parameters:
+       # - PRIM_DEFAULT_IMPL=
+    sim:
+      <<: *default_target
+      default_tool: verilator
+      filesets_append:
+        - files_verilator
+      toplevel: top_verilator
+      tools:
+        verilator:
+          mode: cc
+          verilator_options:
+            - '--trace'
+            - '--trace-fst'
+            - '--trace-structs'
+            - '--trace-params'
+            - '--trace-max-array 1024'
+            - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
+            - '-LDFLAGS "-pthread -lutil -lelf"'
+            - "-Wall"
+            - 'Wwarn-IMPERFECTSCH'
+            - "--unroll-count 72"
+          parameters
+            - PRIM_DEFAULT_IMPL=prim_pkg::ImplGeneric
+    
