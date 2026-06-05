@@ -2,6 +2,8 @@
 
 This is the synthesized hardware and later firmware for a closed-loop pen plotter. It uses SystemVerilog for the HDL, Verilator for simulation and Quartus Prime for Synthesis.
 
+[Project Plan and Goals](https://icy-tee.github.io/blog/pen-plotter/phase1_rw/)
+
 ## Organization
 
 ```
