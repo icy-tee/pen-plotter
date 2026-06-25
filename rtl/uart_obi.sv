@@ -86,15 +86,15 @@ assign status.rx_full = rx_buf_end + 1'b1 == rx_buf_start;
 assign status.tx_full = tx_buf_end + 1'b1 == tx_buf_start;
 
 always_comb begin
-    case (baud_selector)
-        'h00: clks_per_bit = 0; // 0 => DISABLED; stalls tx and rx
-        'h01: clks_per_bit = ClockRate / 4800;
-        'h02: clks_per_bit = ClockRate / 9600;
-        'h03: clks_per_bit = ClockRate / 19200;
-        'h04: clks_per_bit = ClockRate / 38400;
-        'h05: clks_per_bit = ClockRate / 57600;
-        'h06: clks_per_bit = ClockRate / 115200;
-        'h07: clks_per_bit = ClockRate / 230400;
+    case (baud_e'(baud_selector))
+        BAUD_DISABLED: clks_per_bit = 0; // 0 => DISABLED; stalls tx and rx
+        BAUD_4800    : clks_per_bit = ClockRate / 4800;
+        BAUD_9600    : clks_per_bit = ClockRate / 9600;
+        BAUD_19200   : clks_per_bit = ClockRate / 19200;
+        BAUD_38400   : clks_per_bit = ClockRate / 38400;
+        BAUD_57600   : clks_per_bit = ClockRate / 57600;
+        BAUD_115200  : clks_per_bit = ClockRate / 115200;
+        BAUD_230400  : clks_per_bit = ClockRate / 230400;
         default: clks_per_bit = 0;
     endcase
 end

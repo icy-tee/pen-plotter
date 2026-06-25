@@ -1,0 +1,40 @@
+CAPI=2:
+name: "icytee:dv:obi_uart_tb"
+description: "Testbench for the OBI UART peripheral"
+
+filesets:
+  uart_obi_dv:
+    depend:
+      - icytee:dv:obi_uart_env
+    files: 
+      - tests/obi_uart_base_test.svh: { is_include_file: true }
+      - tests/obi_uart_read_test.svh: { is_include_file: true }
+      - tests/obi_uart_write_test.svh: { is_include_file: true }
+      - tests/obi_uart_tests_pkg.sv
+      - tb/obi_uart_tb_top.sv
+    file_type: systemVerilogSource
+
+parameters:
+  UVM_TESTNAME:
+    datatype: str
+    paramtype: plusarg
+    description: UVM test to run
+
+targets:
+  uart_obi_dv:
+    default_tool: modelsim
+    filesets_append:
+      - uart_obi_dv
+    toplevel: obi_uart_tb_top
+    parameters:
+      - UVM_TESTNAME=obi_uart_read_test
+    tools:
+      modelsim:
+        vlog_options:
+          - -timescale=1ns/1ps
+          - +incdir+$::env(QUESTA_HOME)/verilog_src/uvm-1.2/src/
+          - -L $::env(QUESTA_HOME)/uvm-1.2
+        vsim_options:
+          - -voptargs=+acc
+          - -L $$QUESTA_HOME/uvm-1.2
+          - -sv_lib $$QUESTA_HOME/uvm-1.2/linux_x86_64/uvm_dpi

@@ -1,5 +1,5 @@
 CAPI=2:
-name: "icytee:plotter:soc"
+name: "icytee:soc:plotter"
 description: "SoC implementing features necessary to support closed-loop control over a pen plotter"
 filesets:
   rtl:
@@ -33,30 +33,7 @@ filesets:
       - sim/verilator/sim_main.cpp: { file_type: cppSource }
 
   files_tb:
-    files:
-      - rtl/uart_obi_pkg.sv
-      - rtl/uart_obi.sv
-      - dv/uvm/obi/obi_if.sv
-      - dv/uvm/uart/uart_if.sv
-      - dv/uvm/obi/obi_item.svh:                      { is_include_file: true }
-      - dv/uvm/obi/obi_driver.svh:                    { is_include_file: true }
-      - dv/uvm/obi/obi_monitor.svh:                   { is_include_file: true }
-      - dv/uvm/obi/obi_agent.svh:                     { is_include_file: true }
-      - dv/uvm/obi/seq/base_obi_seq.svh:              { is_include_file: true }
-      - dv/uvm/uart/uart_item.svh:                    { is_include_file: true }
-      - dv/uvm/uart/uart_driver.svh:                  { is_include_file: true }
-      - dv/uvm/uart/uart_monitor.svh:                 { is_include_file: true }
-      - dv/uvm/uart/uart_agent.svh:                   { is_include_file: true }
-      - dv/uvm/obi_uart/obi_uart_scoreboard.svh:      { is_include_file: true }
-      - dv/uvm/obi_uart/obi_uart_env.svh:             { is_include_file: true }
-      - dv/uvm/obi_uart/seq/simple_seq.svh:           { is_include_file: true }
-      - dv/uvm/obi_uart/tests/obi_uart_base_test.svh: { is_include_file: true }
-      - dv/uvm/obi/obi_pkg.sv
-      - dv/uvm/uart/uart_pkg.sv
-      - dv/uvm/obi_uart/obi_uart_env_pkg.sv
-      - dv/uvm/obi_uart/tests/obi_uart_tests_pkg.sv
-      - dv/uvm/obi_uart/tb/obi_uart_tb_top.sv
-    file_type: systemVerilogSource
+    files: []
 
 
   # add constraints for quartus/de23lite

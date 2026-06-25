@@ -5,6 +5,7 @@ module obi_uart_tb_top;
     timeunit 1ns / 1ps;
     import uvm_pkg::*;
     import obi_uart_tests_pkg::*;
+    import uart_pkg::uart_cfg;
 
 
     localparam time ClkPeriod = 10ns;
@@ -36,12 +37,14 @@ module obi_uart_tb_top;
     );
 
     initial begin
+        uart_cfg m_uart_cfg = uart_cfg::type_id::create("m_uart_cfg");
+        m_uart_cfg.baud = uart_obi_pkg::BAUD_115200;
         uvm_config_db #(virtual uart_if)::set (null, "*", "uart_if", uart_if);
         uvm_config_db #(virtual obi_if)::set (null, "*", "obi_if", obi_if);
         uvm_config_db #(int unsigned)::set (null, "*", "device_mask", DeviceMask);
-        uvm_config_db #(int unsigned)::set (null, "*", "clks_per_bit", 50000000 / 9600);
+        uvm_config_db #(uart_cfg)::set (null, "*", "m_uart_cfg", m_uart_cfg);
 
-        run_test("obi_uart_base_test");
+        run_test("obi_uart_write_test");
     end
 
     initial begin

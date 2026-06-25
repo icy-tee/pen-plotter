@@ -12,7 +12,7 @@ class uart_agent extends uvm_agent;
     `uvm_component_utils(uart_agent)
 
     uart_driver drv;
-    uart_sequencer seq;
+    uart_sequencer sqr;
     uart_monitor mon;
 
     function new(string name, uvm_component parent);
@@ -24,13 +24,13 @@ class uart_agent extends uvm_agent;
         mon = uart_monitor::type_id::create("mon", this);
         if (get_is_active() == UVM_ACTIVE) begin
             drv = uart_driver::type_id::create("drv", this);
-            seq = uart_sequencer::type_id::create("seq", this);
+            sqr = uart_sequencer::type_id::create("sqr", this);
         end
     endfunction
 
     virtual function void connect_phase(uvm_phase phase);
         if (get_is_active() == UVM_ACTIVE)
-            drv.seq_item_port.connect(seq.seq_item_export);
+            drv.seq_item_port.connect(sqr.seq_item_export);
     endfunction
 
 endclass

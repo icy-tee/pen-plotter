@@ -25,7 +25,7 @@ class obi_driver extends uvm_driver #(obi_item);
         super.run_phase(phase);
 
         iface.drv.drv_cb.req <= 1'b0;
-        do @(iface.drv.drv_cb); while (!iface.drv.rst_n);
+        do @(iface.drv.drv_cb); while (iface.drv.rst_n !== 1'b1);
 
         forever begin
             `uvm_info(get_type_name(), $sformatf("Waiting for data from sequencer"), UVM_MEDIUM)
@@ -38,7 +38,7 @@ class obi_driver extends uvm_driver #(obi_item);
             iface.drv.drv_cb.we    <= obi_packet.we;
             iface.drv.drv_cb.be    <= obi_packet.be;
 
-            do @(iface.drv.drv_cb); while (!iface.drv.drv_cb.gnt);
+            do @(iface.drv.drv_cb); while (iface.drv.drv_cb.gnt !== 1'b1);
 
             iface.drv.drv_cb.req   <= 1'b0;
             iface.drv.drv_cb.addr  <= '0;

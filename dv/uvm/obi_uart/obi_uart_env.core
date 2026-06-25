@@ -1,0 +1,27 @@
+CAPI=2:
+name: "icytee:dv:obi_uart_env"
+description: "UVM environment for the OBI UART peripheral"
+filesets:
+  dv:
+    depend:
+      - icytee:ip:uart_obi
+      - icytee:dv:obi_agent
+      - icytee:dv:uart_agent
+    files:
+      - obi_uart_vsqr.svh:             { is_include_file: true }
+      - obi_uart_scoreboard.svh:       { is_include_file: true }
+      - obi_uart_env.svh:              { is_include_file: true }
+      - seq/obi_uart_base_vseq.svh:    { is_include_file: true }
+      - seq/rx_loopback_vseq.svh:      { is_include_file: true }
+      - seq/baud_seq.svh:              { is_include_file: true }
+      - seq/read_rx_seq.svh:           { is_include_file: true }
+      - seq/write_tx_seq.svh:          { is_include_file: true }
+      - tests/obi_uart_base_test.svh:  { is_include_file: true }
+      - tests/obi_uart_read_test.svh:  { is_include_file: true }
+      - tests/obi_uart_write_test.svh: { is_include_file: true }
+      - obi_uart_env_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

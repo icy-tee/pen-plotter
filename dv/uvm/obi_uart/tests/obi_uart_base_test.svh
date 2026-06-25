@@ -24,29 +24,6 @@ class obi_uart_base_test extends uvm_test;
         super.end_of_elaboration_phase(phase);
         uvm_top.print_topology();
     endfunction
-
-    virtual task run_phase(uvm_phase phase);
-        simple_seq seq = new("seq");
-        super.run_phase(phase);
-        phase.raise_objection(this);
-        seq.start(env.obi_agt.sqr);
-        #1us;
-
-        fork
-            begin : drain
-                while (env.scb.tx_expected.size() != 0 || env.scb.rx_expected.size() != 0)
-                    #1us;
-            end
-            begin : watchdog
-                #10ms;
-                `uvm_error("TEST", "timeout waiting for scoreboard to drain")
-            end
-        join_any
-        disable fork;
-
-        phase.drop_objection(this);
-    endtask
-
 endclass
 
 `endif

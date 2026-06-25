@@ -11,8 +11,8 @@ class obi_item extends uvm_sequence_item;
     rand bit        we;
     rand bit [ 3:0] be;
     rand bit [31:0] wdata;
-    rand bit [31:0] rdata;
-    rand bit        err;
+    bit [31:0] rdata;
+    bit        err;
 
     function new(string name = "obi_item");
         super.new(name);
