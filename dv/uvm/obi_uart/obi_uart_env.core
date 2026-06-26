@@ -16,9 +16,6 @@ filesets:
       - seq/baud_seq.svh:              { is_include_file: true }
       - seq/read_rx_seq.svh:           { is_include_file: true }
       - seq/write_tx_seq.svh:          { is_include_file: true }
-      - tests/obi_uart_base_test.svh:  { is_include_file: true }
-      - tests/obi_uart_read_test.svh:  { is_include_file: true }
-      - tests/obi_uart_write_test.svh: { is_include_file: true }
       - obi_uart_env_pkg.sv
     file_type: systemVerilogSource
 targets:

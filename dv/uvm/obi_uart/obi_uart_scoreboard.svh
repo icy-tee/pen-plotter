@@ -13,7 +13,6 @@ import uart_pkg::*;
 class obi_uart_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(obi_uart_scoreboard)
 
-    int unsigned device_mask;
     uvm_analysis_imp_obi #(obi_item, obi_uart_scoreboard) obi_imp;
     uvm_analysis_imp_dut_rx #(uart_item, obi_uart_scoreboard) dut_rx_imp;
     uvm_analysis_imp_dut_tx #(uart_item, obi_uart_scoreboard) dut_tx_imp;

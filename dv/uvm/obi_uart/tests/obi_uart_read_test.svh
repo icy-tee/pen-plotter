@@ -5,7 +5,7 @@
 import uvm_pkg::*;
 import obi_uart_env_pkg::*;
 
-`include "tests/obi_uart_base_test.svh"
+`include "obi_uart_base_test.svh"
 
 class obi_uart_read_test extends obi_uart_base_test;
     `uvm_component_utils(obi_uart_read_test)

@@ -1,0 +1,20 @@
+CAPI=2:
+name: "icytee:dv:obi_reg_env"
+description: "UVM environment for the OBI reg peripheral helper"
+filesets:
+  dv:
+    depend:
+      - lowrisc:prim:subreg
+      - icytee:dv:obi_agent
+      - icytee:dv:reg_agent
+    files:
+      - obi_reg_env_cfg.svh:          { is_include_file: true }
+      - obi_reg_scoreboard.svh:       { is_include_file: true }
+      - obi_reg_env.svh:              { is_include_file: true }
+      - seq/reg_wr_seq.svh:           { is_include_file: true }
+      - obi_reg_env_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

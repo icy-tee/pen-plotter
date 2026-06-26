@@ -19,7 +19,7 @@ package uart_obi_pkg;
     } baud_e;
 
     localparam int unsigned STSLane  = 'h000;
-    localparam int unsigned BaudLane = 'h001;
-    localparam int unsigned TXLane   = 'h002;
-    localparam int unsigned RXLane   = 'h003;
+    localparam int unsigned BaudLane = 'h004;
+    localparam int unsigned TXLane   = 'h008;
+    localparam int unsigned RXLane   = 'h00C;
 endpackage

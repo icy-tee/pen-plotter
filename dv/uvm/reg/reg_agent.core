@@ -1,0 +1,17 @@
+CAPI=2:
+name: "icytee:dv:reg_agent"
+description: "UVM agent for the OBI REG HW protocol"
+filesets:
+  dv:
+    files:
+      - reg_if.sv
+      - reg_item.svh:         { is_include_file: true }
+      - reg_driver.svh:       { is_include_file: true }
+      - reg_monitor.svh:      { is_include_file: true }
+      - reg_agent.svh:        { is_include_file: true }
+      - reg_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

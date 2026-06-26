@@ -6,16 +6,14 @@
 import uvm_pkg::*;
 import obi_uart_env_pkg::*;
 
-`include "tests/obi_uart_base_test.svh"
+`include "obi_uart_base_test.svh"
 
 class obi_uart_write_test extends obi_uart_base_test;
     `uvm_component_utils(obi_uart_write_test)
 
-
     function new(string name = "obi_uart_write_test", uvm_component parent);
         super.new(name, parent);
     endfunction
-
 
     virtual task run_phase(uvm_phase phase);
         baud_seq bseq = baud_seq::type_id::create("bseq");
@@ -45,7 +43,6 @@ class obi_uart_write_test extends obi_uart_base_test;
 
         phase.drop_objection(this);
     endtask
-
 endclass
 
 `endif
