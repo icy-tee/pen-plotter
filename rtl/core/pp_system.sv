@@ -1,0 +1,353 @@
+
+module pp_top #(
+    parameter ibex_pkg::regfile_e RegFile = ibex_pkg::RegFileFPGA,
+    parameter string SRAMInitFile = ""
+) (
+    input clk,
+    input rst_n,
+    input [1:0] quad_x,
+    input [1:0] quad_y,
+    input uart_rx,
+    output uart_tx,
+    output [1:0] motor_x,
+    output [1:0] motor_y,
+    output servo
+);
+
+    typedef enum {
+        CoreD
+    } bus_host_e;
+
+    typedef enum {
+        Ram,
+        Uart,
+        Gpio,
+        Pwm,
+        Pid, // peripheral decodes X/Y access
+        Quad, // peripheral decodes X/Y access
+        Timer,
+        DbgDev
+    } bus_device_e;
+
+    localparam logic [31:0] MemSize       = 128 * 1024;
+    localparam logic [31:0] MemStart      = 32'h00100000;
+    localparam logic [31:0] MemMask       = ~(MemSize-1);
+
+    localparam logic [31:0] UARTSize      = 4 * 1024;
+    localparam logic [31:0] UARTStart     = 32'h80000000;
+    localparam logic [31:0] UARTMask      = ~(UARTSize-1);
+
+    localparam logic [31:0] GPIOSize      = 4 * 1024;
+    localparam logic [31:0] GPIOStart     = 32'h80001000;
+    localparam logic [31:0] GPIOMask      = ~(GPIOSize-1);
+
+    localparam logic [31:0] PWMSize       = 4 * 1024;
+    localparam logic [31:0] PWMStart      = 32'h80002000;
+    localparam logic [31:0] PWMMask       = ~(PWMSize-1);
+
+    localparam logic [31:0] TimerSize     = 4 * 1024;
+    localparam logic [31:0] TimerStart    = 32'h80003000;
+    localparam logic [31:0] TimerMask     = ~(TimerSize-1);
+
+    localparam logic [31:0] PIDSize       = 1 * 1024;
+    localparam logic [31:0] PIDStart      = 32'h80004000;
+    localparam logic [31:0] PIDMask       = ~(PIDSize-1);
+
+    localparam logic [31:0] QuadSize      = 1 * 1024;
+    localparam logic [31:0] QuadStart     = 32'h80004400;
+    localparam logic [31:0] QuadMask      = ~(QuadSize-1);
+
+    localparam int NrDevices = 7;
+    localparam int NrHosts   = 1;
+
+    localparam int Core = 0;
+
+    // Interrupts.
+    logic timer_irq;
+    logic uart_irq;
+    logic pid_irq;
+
+    // Host signals.
+    logic        host_req      [NrHosts];
+    logic        host_gnt      [NrHosts];
+    logic [31:0] host_addr     [NrHosts];
+    logic        host_we       [NrHosts];
+    logic [ 3:0] host_be       [NrHosts];
+    logic [31:0] host_wdata    [NrHosts];
+    logic        host_rvalid   [NrHosts];
+    logic [31:0] host_rdata    [NrHosts];
+    logic        host_err      [NrHosts];
+
+    // Device signals.
+    logic        device_req    [NrDevices];
+    logic        device_gnt    [NrDevices];
+    logic [31:0] device_addr   [NrDevices];
+    logic        device_we     [NrDevices];
+    logic [ 3:0] device_be     [NrDevices];
+    logic [31:0] device_wdata  [NrDevices];
+    logic        device_rvalid [NrDevices];
+    logic [31:0] device_rdata  [NrDevices];
+    logic        device_err    [NrDevices];
+
+    // Instruction fetch signals.
+    logic        core_instr_req;
+    logic        core_instr_gnt;
+    logic        core_instr_rvalid;
+    logic [31:0] core_instr_addr;
+    logic [31:0] core_instr_rdata;
+    logic        mem_instr_req;
+    logic [31:0] mem_instr_rdata;
+
+    assign mem_instr_req = core_instr_req &
+            ((core_instr_addr & cfg_device_addr_mask[Ram]) == cfg_device_addr_base[Ram]);
+    assign core_instr_gnt = mem_instr_req;
+    assign core_instr_rdata = mem_instr_rdata;
+
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            core_instr_rvalid <= 1'b0;
+        end else begin
+            core_instr_rvalid <= core_instr_gnt;
+        end
+    end
+
+
+    logic [31:0] cfg_device_addr_base [NrDevices];
+    logic [31:0] cfg_device_addr_mask [NrDevices];
+
+    assign cfg_device_addr_base[Ram]   = MemStart;
+    assign cfg_device_addr_mask[Ram]   = MemMask;
+    assign cfg_device_addr_base[Uart]  = UARTStart;
+    assign cfg_device_addr_mask[Uart]  = UARTMask;
+    assign cfg_device_addr_base[Gpio]  = GPIOStart;
+    assign cfg_device_addr_mask[Gpio]  = GPIOMask;
+    assign cfg_device_addr_base[Pwm]   = PWMStart;
+    assign cfg_device_addr_mask[Pwm]   = PWMMask;
+    assign cfg_device_addr_base[Quad]  = QuadStart;
+    assign cfg_device_addr_mask[Quad]  = QuadMask;
+    assign cfg_device_addr_base[Pid]   = PIDStart;
+    assign cfg_device_addr_mask[Pid]   = PIDMask;
+    assign cfg_device_addr_base[Timer] = TimerStart;
+    assign cfg_device_addr_mask[Timer] = TimerMask;
+
+    ram_2p #(
+      .Depth      ( MemSize / 4 ),
+      .MemInitFile( SRAMInitFile )
+     ) ram_2p (
+      .clk_i     (clk),
+      .rst_ni    (rst_n),
+      .a_req_i   (device_req[Ram]),
+      .a_we_i    (device_we[Ram]),
+      .a_be_i    (device_be[Ram]),
+      .a_addr_i  (device_addr[Ram]),
+      .a_wdata_i (device_wdata[Ram]),
+      .a_rvalid_o(device_rvalid[Ram]),
+      .a_rdata_o (device_rdata[Ram]),
+
+      .b_req_i   (mem_instr_req),
+      .b_we_i    (1'b0),
+      .b_be_i    (4'b0),
+      .b_addr_i  (core_instr_addr),
+      .b_wdata_i (32'b0),
+      .b_rvalid_o(),
+      .b_rdata_o (mem_instr_rdata)
+    );
+
+    bus #(
+        .HostCount  (NrHosts),
+        .DeviceCount(NrDevices)
+     ) u_bus (
+        .clk             (clk),
+        .rst_ni          (rst_n),
+
+        .host_req_i      (host_req),
+        .host_gnt_o      (host_gnt),
+        .host_addr_i     (host_addr),
+        .host_we_i       (host_we),
+        .host_be_i       (host_be),
+        .host_wdata_i    (host_wdata),
+        .host_rvalid_o   (host_rvalid),
+        .host_rdata_o    (host_rdata),
+        .host_err_o      (host_err),
+
+        .device_req_o    (device_req),
+        .device_gnt_i    (device_gnt),
+        .device_addr_o   (device_addr),
+        .device_we_o     (device_we),
+        .device_be_o     (device_be),
+        .device_wdata_o  (device_wdata),
+        .device_rvalid_i (device_rvalid),
+        .device_rdata_i  (device_rdata),
+        .device_err_i    (device_err),
+
+        .device_addr_base(cfg_device_addr_base),
+        .device_addr_mask(cfg_device_addr_mask)
+    );
+
+    ibex_top #(
+        .MHPMCounterNum              (10),
+        .RV32M                       (ibex_pkg::RV32MFast),
+        .RV32B                       (ibex_pkg::RV32BNone),
+        .RegFile                     (RegFile),
+        .DbgTriggerEn                (),
+        .DbgHwBreakNum               (),
+        .DmAddrMask                  (),
+        .DmHaltAddr                  ()
+     ) u_ibex (
+        .clk_i                    (clk),
+        .rst_ni                   (rst_n),
+        .test_en_i                (1'b0),
+
+        .ram_cfg_icache_tag_i     ('0),
+        .ram_cfg_rsp_icache_tag_o ('0),
+        .ram_cfg_icache_data_i    ('0),
+        .ram_cfg_rsp_icache_data_o('0),
+
+        .hart_id_i                (32'b0),
+        .boot_addr_i              (32'h00100000),
+
+        .instr_req_o              (core_instr_req),
+        .instr_gnt_i              (core_instr_gnt),
+        .instr_rvalid_i           (core_instr_rvalid),
+        .instr_addr_o             (core_instr_addr),
+        .instr_rdata_i            (core_instr_rdata),
+        .instr_rdata_intg_i       (),
+        .instr_err_i              ('0),
+
+        .data_req_o               (host_req[Core]),
+        .data_gnt_i               (host_gnt[Core]),
+        .data_rvalid_i            (host_rvalid[Core]),
+        .data_we_o                (host_we[Core]),
+        .data_be_o                (host_be[Core]),
+        .data_addr_o              (host_addr[Core]),
+        .data_wdata_o             (host_wdata[Core]),
+        .data_wdata_intg_o        (),
+        .data_rdata_i             (host_rdata[Core]),
+        .data_rdata_intg_i        (),
+        .data_err_i               (host_err[Core]),
+
+        .irq_software_i           ('0),
+        .irq_timer_i              (timer_irq),
+        .irq_external_i           (1'b0),
+        .irq_fast_i               ({13'b0, pid_irq, uart_irq}),
+        .irq_nm_i                 (1'b0),
+
+        .scramble_key_valid_i     ('0),
+        .scramble_key_i           ('0),
+        .scramble_nonce_i         ('0),
+        .scramble_req_o           (),
+
+        .debug_req_i              (),
+        .crash_dump_o             (),
+        .double_fault_seen_o      (),
+
+        .fetch_enable_i           ('1),
+        .alert_minor_o            (),
+        .alert_major_internal_o   (),
+        .alert_major_bus_o        (),
+        .core_sleep_o             (),
+
+        .scan_rst_ni              (),
+        .lockstep_cmp_en_o        (),
+
+        .data_req_shadow_o        (),
+        .data_we_shadow_o         (),
+        .data_be_shadow_o         (),
+        .data_addr_shadow_o       (),
+        .data_wdata_shadow_o      (),
+        .data_wdata_intg_shadow_o (),
+        .instr_req_shadow_o       (),
+        .instr_addr_shadow_o      ()
+    );
+
+    uart_obi #(
+        .ClockRate   (50_000_000)
+     ) u_uart (
+        .clk          (clk),
+        .rst_ni       (rst_n),
+        .rx_i         (uart_rx),
+        .tx_o         (uart_tx),
+        .req_i        (device_req[Uart]),
+        .gnt_o        (device_gnt[Uart]),
+        .addr_i       (device_addr[Uart]),
+        .we_i         (device_we[Uart]),
+        .be_i         (device_be[Uart]),
+        .wdata_i      (device_wdata[Uart]),
+        .rvalid_o     (device_rvalid[Uart]),
+        .rdata_o      (device_rdata[Uart]),
+        .err_o        (device_err[Uart])
+    );
+
+// pid_controller u_pid_x(
+//     .clk                    (clk),
+//     .rst_n                  (rst_n),
+//     .proportional_constant_i(kp),
+//     .derivative_constant_i  (kd),
+//     .sample_rate_i          (sample_rate[25:0]),
+//     .process_variable_i     (tick_pos_x),
+//     .setpoint_i             (setpoint_x),
+//     .stable_o               (stable_x),
+//     .motor_dir_o            (x_dir),
+//     .motor_duty_o           (x_duty)
+// );
+
+
+// pid_controller u_pid_y(
+//     .clk                    (clk),
+//     .rst_n                  (rst_n),
+//     .proportional_constant_i(kp),
+//     .derivative_constant_i  (kd),
+//     .sample_rate_i          (sample_rate[25:0]),
+//     .process_variable_i     (tick_pos_y),
+//     .setpoint_i             (setpoint_y),
+//     .stable_o               (stable_y),
+//     .motor_dir_o            (y_dir),
+//     .motor_duty_o           (y_duty)
+// );
+
+
+// md_controller u_x_motor_controller(
+//     .clk(clk),
+//     .rst_n(rst_n),
+//     .mode(x_dir),
+//     .duty(x_duty),
+//     .in1(motor_x[0]),
+//     .in2(motor_x[1])
+// );
+
+
+// md_controller u_y_motor_controller(
+//     .clk(clk),
+//     .rst_n(rst_n),
+//     .mode(y_dir),
+//     .duty(y_duty),
+//     .in1(motor_y[0]),
+//     .in2(motor_y[1])
+// );
+
+
+// servo_pwm u_servo (
+//     .clk    (clk),
+//     .rst_n  (rst_n),
+//     .angle_i(servo_angle),
+//     .pwm_o  (servo)
+// );
+
+// quad_decoder u_x_quad(
+//     .clk(clk),
+//     .rst_n(rst_n & quad_rst_n),
+//     .A_i(quad_x[0]),
+//     .B_i(quad_x[1]),
+//     .tick_position(tick_pos_x)
+// );
+
+
+// quad_decoder u_y_quad(
+//     .clk(clk),
+//     .rst_n(rst_n & quad_rst_n),
+//     .A_i(quad_y[0]),
+//     .B_i(quad_y[1]),
+//     .tick_position(tick_pos_y)
+// );
+
+endmodule

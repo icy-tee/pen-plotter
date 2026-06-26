@@ -3,6 +3,7 @@
 .clangd
 compile_flags.txt
 .slang/
+.svlangserver/
 veridian.yml
 .rules.verible_lint
 

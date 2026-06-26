@@ -9,7 +9,6 @@ module obi_uart_tb_top;
 
 
     localparam time ClkPeriod = 10ns;
-    localparam int unsigned DeviceMask = 32'h0000_000F;
 
     bit clk, rst_n;
     always #ClkPeriod clk <= ~clk;
@@ -23,7 +22,6 @@ module obi_uart_tb_top;
         .clk          (clk),
         .rst_ni       (rst_n),
         .rx_i         (uart_if.tx),
-        .device_mask_i(DeviceMask),
         .tx_o         (uart_if.rx),
         .req_i        (obi_if.req),
         .gnt_o        (obi_if.gnt),
@@ -41,7 +39,6 @@ module obi_uart_tb_top;
         m_uart_cfg.baud = uart_obi_pkg::BAUD_115200;
         uvm_config_db #(virtual uart_if)::set (null, "*", "uart_if", uart_if);
         uvm_config_db #(virtual obi_if)::set (null, "*", "obi_if", obi_if);
-        uvm_config_db #(int unsigned)::set (null, "*", "device_mask", DeviceMask);
         uvm_config_db #(uart_cfg)::set (null, "*", "m_uart_cfg", m_uart_cfg);
 
         run_test("obi_uart_write_test");

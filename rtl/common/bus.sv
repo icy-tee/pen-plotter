@@ -154,7 +154,7 @@ module bus #(
             if (device_req_valid) begin
                 host_gnt_o[host_req]       = device_gnt_i[device_req];
                 device_req_o[device_req]   = host_req_i[host_req];
-                device_addr_o[device_req]  = host_addr_i[host_req];
+                device_addr_o[device_req]  = host_addr_i[host_req] & (~device_addr_mask[device_req]);
                 device_we_o[device_req]    = host_we_i[host_req];
                 device_be_o[device_req]    = host_be_i[host_req];
                 device_wdata_o[device_req] = host_wdata_i[host_req];

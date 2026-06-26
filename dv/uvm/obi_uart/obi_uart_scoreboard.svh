@@ -27,21 +27,18 @@ class obi_uart_scoreboard extends uvm_scoreboard;
 
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        if (!uvm_config_db #(int unsigned)::get(null, "*", "device_mask", device_mask)) begin
-            `uvm_fatal(get_type_name(), "Device mask not found")
-        end
         obi_imp = new("obi_imp", this);
         dut_rx_imp = new("dut_rx_imp", this);
         dut_tx_imp = new("dut_tx_imp", this);
     endfunction
 
     function void write_obi(obi_item itm);
-        if ((itm.addr & device_mask) == uart_obi_pkg::TXLane && itm.we) begin
+        if (itm.addr == uart_obi_pkg::TXLane && itm.we) begin
             `uvm_info("SB", $sformatf("OBI TX write data=%08h be=%04b", itm.wdata, itm.be), UVM_LOW)
             for (int i = 0; i < 4; i++) begin
                 if (itm.be[i]) tx_expected.push_back(itm.wdata[i*8 +: 8]);
             end
-        end else if ((itm.addr & device_mask) == uart_obi_pkg::RXLane && !itm.we) begin
+        end else if (itm.addr == uart_obi_pkg::RXLane && !itm.we) begin
             byte unsigned expected;
             `uvm_info("SB", $sformatf("OBI RX read rdata=%08h", itm.rdata), UVM_LOW)
             if (rx_expected.size() == 0) begin

@@ -1,12 +1,12 @@
 
 module uart_obi #(
     parameter int unsigned ClockRate = 50_000_000,
-    parameter int unsigned BufferLength = 32
+    parameter int unsigned BufferLength = 32,
+    parameter int unsigned UsedAddrWidth = 8
 ) (
     input clk,
     input rst_ni,
     input  rx_i,
-    input [31:0] device_mask_i,
     output logic tx_o,
 
     input  logic        req_i,
@@ -122,7 +122,7 @@ always_comb begin
 
     if (we_latch) begin
         rdata_selector = DISABLED;
-        case (addr_latch & device_mask_i)
+        case (addr_latch)
             STSLane:  wdata_selector = DISABLED; // status is readonly
             BaudLane: wdata_selector = BAUD;
             TXLane:   wdata_selector = TX;
@@ -134,7 +134,7 @@ always_comb begin
         endcase
     end else begin
         wdata_selector = DISABLED;
-        case (addr_latch & device_mask_i)
+        case (addr_latch)
             STSLane:  rdata_selector = STATUS;
             BaudLane: rdata_selector = BAUD;
             TXLane:   rdata_selector = DISABLED; // disabled on TX no reads allowed
@@ -166,7 +166,7 @@ always_ff @(posedge clk or negedge rst_ni) begin
                 if (req_i) begin
                     device_state <= we_i ? WRITE : READ;
                     wdata_latch <= wdata_i;
-                    addr_latch <= addr_i;
+                    addr_latch <= {24'b0, addr_i[UsedAddrWidth-1:0]};
                     we_latch <= we_i;
                     be_latch <= be_i;
                 end
