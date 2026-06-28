@@ -1,0 +1,16 @@
+CAPI=2:
+name: "icytee:dv:base_obi_agent"
+description: "Role-agnostic base for the OBI UVM agent (interface, item, monitor, base sequence)"
+filesets:
+  dv:
+    files:
+      - obi_if.sv
+      - obi_item.svh:         { is_include_file: true }
+      - obi_monitor.svh:      { is_include_file: true }
+      - seq/base_obi_seq.svh: { is_include_file: true }
+      - base_obi_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

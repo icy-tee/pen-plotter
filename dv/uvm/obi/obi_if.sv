@@ -1,4 +1,6 @@
-interface obi_if(input logic clk, input logic rst_n);
+// DEVICE=0 (default): host/master view
+// DEVICE=1          : device/slave view
+interface obi_if #(parameter bit DEVICE = 1'b0) (input logic clk, input logic rst_n);
     logic        req;
     logic        gnt;
     logic [31:0] addr;
@@ -9,16 +11,20 @@ interface obi_if(input logic clk, input logic rst_n);
     logic [31:0] rdata;
     logic        err;
 
-    clocking drv_cb @(posedge clk);
-        output req, addr, we, be, wdata;
-        input gnt, rvalid, rdata, err;
-    endclocking
-
     clocking mon_cb @(posedge clk);
         input req, addr, we, be, wdata, gnt, rvalid, rdata, err;
     endclocking
 
-    modport drv (clocking drv_cb, input clk, rst_n);
-    modport mon (clocking mon_cb, input clk, rst_n);
+    if (!DEVICE) begin : g_drv
+        clocking drv_cb @(posedge clk);
+            output req, addr, we, be, wdata;
+            input  gnt, rvalid, rdata, err;
+        endclocking
+    end else begin : g_drv
+        clocking drv_cb @(posedge clk);
+            input  req, addr, we, be, wdata;
+            output gnt, rvalid, rdata, err;
+        endclocking
+    end
 
 endinterface

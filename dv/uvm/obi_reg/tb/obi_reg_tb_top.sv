@@ -74,7 +74,7 @@ module obi_reg_tb_top;
         foreach (cfg.modes[i]) cfg.modes[i] = RegAccess[i];
 
         uvm_config_db #(obi_reg_env_cfg)::set(null, "*", "obi_reg_env_cfg", cfg);
-        uvm_config_db #(virtual obi_if)::set (null, "*", "obi_if", obi_if);
+        uvm_config_db #(virtual obi_if)::set (null, "uvm_test_top.env*", "obi_if", obi_if);
 
         run_test("obi_reg_test");
     end

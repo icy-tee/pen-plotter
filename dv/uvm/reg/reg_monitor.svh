@@ -29,7 +29,7 @@ class reg_monitor extends uvm_monitor;
         do @(iface.mon.mon_cb); while (iface.mon.rst_n !== 1'b1);
         forever begin
             @(iface.mon.mon_cb);
-            if (iface.mon.mon_cb.hw_de === 1'b1) begin // report hardware writes only
+            if (iface.mon.mon_cb.hw_de === 1'b1) begin
                 item = reg_item::type_id::create("item");
                 item.hw_de = iface.mon.mon_cb.hw_de;
                 item.hw_d  = iface.mon.mon_cb.hw_d;

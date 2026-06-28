@@ -38,7 +38,7 @@ module obi_uart_tb_top;
         uart_cfg m_uart_cfg = uart_cfg::type_id::create("m_uart_cfg");
         m_uart_cfg.baud = uart_obi_pkg::BAUD_115200;
         uvm_config_db #(virtual uart_if)::set (null, "*", "uart_if", uart_if);
-        uvm_config_db #(virtual obi_if)::set (null, "*", "obi_if", obi_if);
+        uvm_config_db #(virtual obi_if)::set (null, "uvm_test_top.env.obi_agt*", "obi_if", obi_if);
         uvm_config_db #(uart_cfg)::set (null, "*", "m_uart_cfg", m_uart_cfg);
 
         run_test("obi_uart_write_test");

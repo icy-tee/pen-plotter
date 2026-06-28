@@ -1,16 +1,16 @@
-`ifndef OBI_AGENT_SVH
-`define OBI_AGENT_SVH
+`ifndef OBI_DEVICE_AGENT_SVH
+`define OBI_DEVICE_AGENT_SVH
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-`include "obi_driver.svh"
+`include "obi_device_driver.svh"
 
-class obi_agent extends uvm_agent;
-    `uvm_component_param_utils(obi_agent)
+class obi_device_agent extends uvm_agent;
+    `uvm_component_param_utils(obi_device_agent)
 
-    obi_driver  drv;
+    obi_device_driver  drv;
     obi_sequencer  sqr;
-    obi_monitor #() mon;
+    obi_monitor #('1) mon;
 
     function new(string name, uvm_component parent);
         super.new(name, parent);
@@ -18,9 +18,9 @@ class obi_agent extends uvm_agent;
 
     virtual function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        mon = obi_monitor #('0)::type_id::create("mon", this);
+        mon = obi_monitor #('1)::type_id::create("mon", this);
         if (get_is_active() == UVM_ACTIVE) begin
-            drv = obi_driver::type_id::create("drv", this);
+            drv = obi_device_driver::type_id::create("drv", this);
             sqr = obi_sequencer::type_id::create("sqr", this);
         end
     endfunction
@@ -33,4 +33,4 @@ class obi_agent extends uvm_agent;
 
 endclass
 
-`endif // OBI_AGENT_SVH
+`endif // OBI_DEVICE_AGENT_SVH

@@ -1,6 +1,8 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-import uart_pkg::*;
+
+`include "uart_item.svh"
+`include "uart_agent.svh"
 
 class base_uart_seq extends uvm_sequence #(uart_item);
     `uvm_object_utils(base_uart_seq)

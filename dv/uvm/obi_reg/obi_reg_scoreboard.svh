@@ -39,7 +39,7 @@ class obi_reg_scoreboard extends uvm_scoreboard;
 
         if (!uvm_config_db #(obi_reg_env_cfg)::get(null, "*", "obi_reg_env_cfg", cfg))
             `uvm_fatal(get_type_name(), "Failed to get obi_reg_env config")
-        if (!uvm_config_db #(virtual obi_if)::get(null, "*", "obi_if", vif))
+        if (!uvm_config_db #(virtual obi_if)::get(this, "", "obi_if", vif))
             `uvm_fatal(get_type_name(), "Failed to get obi_if")
 
         obi_fifo = new("obi_fifo", this);

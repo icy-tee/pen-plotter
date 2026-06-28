@@ -1,15 +1,13 @@
 CAPI=2:
 name: "icytee:dv:obi_agent"
-description: "UVM agent for the OBI protocol"
+description: "UVM host/master agent for the OBI protocol"
 filesets:
   dv:
+    depend:
+      - icytee:dv:base_obi_agent
     files:
-      - obi_if.sv
-      - obi_item.svh:         { is_include_file: true }
-      - obi_driver.svh:       { is_include_file: true }
-      - obi_monitor.svh:      { is_include_file: true }
-      - obi_agent.svh:        { is_include_file: true }
-      - seq/base_obi_seq.svh: { is_include_file: true }
+      - obi_driver.svh: { is_include_file: true }
+      - obi_agent.svh:  { is_include_file: true }
       - obi_pkg.sv
     file_type: systemVerilogSource
 targets:

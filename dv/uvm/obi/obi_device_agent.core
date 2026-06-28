@@ -1,0 +1,16 @@
+CAPI=2:
+name: "icytee:dv:obi_device_agent"
+description: "UVM device/slave agent for the OBI protocol"
+filesets:
+  dv:
+    depend:
+      - icytee:dv:base_obi_agent
+    files:
+      - obi_device_driver.svh: { is_include_file: true }
+      - obi_device_agent.svh:  { is_include_file: true }
+      - obi_device_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

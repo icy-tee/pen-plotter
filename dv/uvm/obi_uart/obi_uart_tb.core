@@ -21,7 +21,7 @@ parameters:
     description: UVM test to run
 
 targets:
-  uart_obi_dv:
+  default: &default_target
     default_tool: modelsim
     filesets_append:
       - uart_obi_dv
