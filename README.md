@@ -7,7 +7,7 @@ This is the synthesized hardware and later firmware for a closed-loop pen plotte
 ## Branches
 
 ```
-  main - functional prototype for the pen plotter controller
+  master - functional prototype for the pen plotter controller
   SoC  - in-progress RISC-V SoC that will use peripherals from prototype and integrate them with an Ibex core
 ```
 
