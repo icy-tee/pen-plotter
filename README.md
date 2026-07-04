@@ -4,6 +4,13 @@ This is the synthesized hardware and later firmware for a closed-loop pen plotte
 
 [Project Plan and Goals](https://icy-tee.github.io/blog/pen-plotter/phase1_rw/)
 
+## Branches
+
+```
+  main - functional prototype for the pen plotter controller
+  SoC  - in-progress RISC-V SoC that will use peripherals from prototype and integrate them with an Ibex core
+```
+
 ## Organization
 
 ```
