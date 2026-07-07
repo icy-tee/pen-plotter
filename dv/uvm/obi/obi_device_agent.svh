@@ -3,6 +3,7 @@
 
 `include "uvm_macros.svh"
 import uvm_pkg::*;
+import base_obi_pkg::*;
 `include "obi_device_driver.svh"
 
 class obi_device_agent extends uvm_agent;

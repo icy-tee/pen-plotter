@@ -24,6 +24,8 @@ class obi_monitor #(parameter bit DEVICE = 1'b0) extends uvm_monitor;
             `uvm_fatal(get_type_name(), "DUT interface not found")
         end
         ap = new("ap", this);
+        phase_r_ap = new("phase_r_ap", this);
+        phase_a_ap = new("phase_a_ap", this);
     endfunction
 
     virtual task run_phase (uvm_phase phase);

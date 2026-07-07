@@ -33,6 +33,7 @@ module bus #(
 );
     localparam int HostCountBits = $clog2(HostCount);
     localparam int DeviceCountBits = $clog2(DeviceCount);
+    localparam int BufferCountBits = $clog2(BufferMax);
 
     typedef struct packed {
         logic [HostCountBits-1:0] host;
@@ -47,13 +48,12 @@ module bus #(
     logic [HostCountBits-1:0] host_req;
     logic [DeviceCountBits-1:0] device_req;
 
-    logic [$clog2(BufferMax)-1:0] outstanding_front, outstanding_back;
+    logic [BufferCountBits-1:0] outstanding_front, outstanding_back;
     logic [BufferMax-1:0] capture_en;
     pair_t outstanding [BufferMax], response;
-    logic outstanding_full, response_valid;
+    logic outstanding_full;
 
     assign response = outstanding[outstanding_front];
-    assign response_valid = device_rvalid_i[response.device] | response.err;
     assign outstanding_full = (outstanding_back + 1'b1) == outstanding_front;
 
     always_comb begin
@@ -82,14 +82,14 @@ module bus #(
 
     always_comb begin
         logic[DeviceCount-1:0] claimed;
-        logic[$clog2(BufferMax)-1:0] occ;
+        logic [BufferCountBits-1:0] occ;
 
         capture_en = '0;
         claimed = '0;
         occ = outstanding_back - outstanding_front;
 
         for (int unsigned i = 0; i < BufferMax; i++) begin
-            automatic logic [$clog2(BufferMax)-1:0] idx = outstanding_front + i;
+            automatic logic [BufferCountBits-1:0] idx = outstanding_front + BufferCountBits'(i);
             automatic logic [DeviceCountBits-1:0] dev = outstanding[idx].device;
 
             if (i < occ) begin

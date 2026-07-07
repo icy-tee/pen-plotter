@@ -1,6 +1,6 @@
 CAPI=2:
 name: "icytee:dv:base_obi_agent"
-description: "Role-agnostic base for the OBI UVM agent (interface, item, monitor, base sequence)"
+description: "Base for the OBI UVM agent"
 filesets:
   dv:
     files:

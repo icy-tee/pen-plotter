@@ -1,0 +1,14 @@
+CAPI=2:
+name: "icytee:rtl:obi_bus"
+description: "OBI interconnect bus"
+
+filesets:
+  rtl:
+    files:
+      - bus.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

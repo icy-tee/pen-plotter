@@ -9,7 +9,6 @@ import prim_subreg_pkg::*;
 
 `include "obi_reg_env_cfg.svh"
 
-`uvm_analysis_imp_decl(_reg)
 
 class obi_reg_scoreboard extends uvm_scoreboard;
     `uvm_component_utils(obi_reg_scoreboard)
@@ -55,7 +54,7 @@ class obi_reg_scoreboard extends uvm_scoreboard;
         obi_item ot;
         reg_item rt;
         super.run_phase(phase);
-        
+
         forever begin
             @(posedge vif.clk);
             while (obi_fifo.try_get(ot)) begin
