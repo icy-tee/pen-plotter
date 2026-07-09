@@ -1,5 +1,5 @@
 
-module pp_top #(
+module pp_system #(
     parameter ibex_pkg::regfile_e RegFile = ibex_pkg::RegFileFPGA,
     parameter string SRAMInitFile = ""
 ) (
@@ -13,6 +13,8 @@ module pp_top #(
     output [1:0] motor_y,
     output servo
 );
+
+assign servo = '0; // WILL BE REMOVED AND REPLACED WITH GENERAL PWM
 
 typedef enum {
     CoreD
@@ -278,92 +280,48 @@ uart_obi #(
     .err_o        (device_err[Uart])
 );
 
+logic [31:0] ticks_x, ticks_y;
+
 obi_quad u_quad (
-  .clk     (clk),
-  .rst_ni  (rst_n),
-  .quad_x_i(quad_x),
-  .quad_y_i(quad_y),
-  .req_i   (device_req[Quad]),
-  .gnt_o   (device_gnt[Quad]),
-  .addr_i  (device_addr[Quad]),
-  .we_i    (device_we[Quad]),
-  .be_i    (device_be[Quad]),
-  .wdata_i (device_wdata[Quad]),
-  .rvalid_o(device_rvalid[Quad]),
-  .rdata_o (device_rdata[Quad]),
-  .err_o   (device_err[Quad])
+    .clk     (clk),
+    .rst_ni  (rst_n),
+
+    .quad_x_i(quad_x),
+    .quad_y_i(quad_y),
+
+    .hw_quad_x(ticks_x),
+    .hw_quad_y(ticks_y),
+
+    .req_i   (device_req[Quad]),
+    .gnt_o   (device_gnt[Quad]),
+    .addr_i  (device_addr[Quad]),
+    .we_i    (device_we[Quad]),
+    .be_i    (device_be[Quad]),
+    .wdata_i (device_wdata[Quad]),
+    .rvalid_o(device_rvalid[Quad]),
+    .rdata_o (device_rdata[Quad]),
+    .err_o   (device_err[Quad])
 );
 
-// pid_controller u_pid_x(
-//     .clk                    (clk),
-//     .rst_n                  (rst_n),
-//     .proportional_constant_i(kp),
-//     .derivative_constant_i  (kd),
-//     .sample_rate_i          (sample_rate[25:0]),
-//     .process_variable_i     (tick_pos_x),
-//     .setpoint_i             (setpoint_x),
-//     .stable_o               (stable_x),
-//     .motor_dir_o            (x_dir),
-//     .motor_duty_o           (x_duty)
-// );
+obi_pid u_pid (
+    .clk      (clk),
+    .rst_ni   (rst_n),
 
+    .hw_pv_x_i(ticks_x),
+    .hw_pv_y_i(ticks_y),
 
-// pid_controller u_pid_y(
-//     .clk                    (clk),
-//     .rst_n                  (rst_n),
-//     .proportional_constant_i(kp),
-//     .derivative_constant_i  (kd),
-//     .sample_rate_i          (sample_rate[25:0]),
-//     .process_variable_i     (tick_pos_y),
-//     .setpoint_i             (setpoint_y),
-//     .stable_o               (stable_y),
-//     .motor_dir_o            (y_dir),
-//     .motor_duty_o           (y_duty)
-// );
+    .motor_x_o(motor_x),
+    .motor_y_o(motor_y),
 
-
-// md_controller u_x_motor_controller(
-//     .clk(clk),
-//     .rst_n(rst_n),
-//     .mode(x_dir),
-//     .duty(x_duty),
-//     .in1(motor_x[0]),
-//     .in2(motor_x[1])
-// );
-
-
-// md_controller u_y_motor_controller(
-//     .clk(clk),
-//     .rst_n(rst_n),
-//     .mode(y_dir),
-//     .duty(y_duty),
-//     .in1(motor_y[0]),
-//     .in2(motor_y[1])
-// );
-
-
-// servo_pwm u_servo (
-//     .clk    (clk),
-//     .rst_n  (rst_n),
-//     .angle_i(servo_angle),
-//     .pwm_o  (servo)
-// );
-
-// quad_decoder u_x_quad(
-//     .clk(clk),
-//     .rst_n(rst_n & quad_rst_n),
-//     .A_i(quad_x[0]),
-//     .B_i(quad_x[1]),
-//     .tick_position(tick_pos_x)
-// );
-
-
-// quad_decoder u_y_quad(
-//     .clk(clk),
-//     .rst_n(rst_n & quad_rst_n),
-//     .A_i(quad_y[0]),
-//     .B_i(quad_y[1]),
-//     .tick_position(tick_pos_y)
-// );
+    .req_i   (device_req[Pid]),
+    .gnt_o   (device_gnt[Pid]),
+    .addr_i  (device_addr[Pid]),
+    .we_i    (device_we[Pid]),
+    .be_i    (device_be[Pid]),
+    .wdata_i (device_wdata[Pid]),
+    .rvalid_o(device_rvalid[Pid]),
+    .rdata_o (device_rdata[Pid]),
+    .err_o   (device_err[Pid])
+);
 
 endmodule

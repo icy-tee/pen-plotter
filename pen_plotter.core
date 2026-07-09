@@ -4,20 +4,14 @@ description: "SoC implementing features necessary to support closed-loop control
 filesets:
   rtl:
     depend:
+      - icytee:rtl:obi_pid
+      - icytee:rtl:obi_uart
+      - icytee:rtl:obi_bus
+      - icytee:rtl:obi_quad
       - lowrisc:ibex:ibex_top
       - pulp:riscv:debug_module
     files:
-      - rtl/pp_pkg.sv
-      - rtl/pp_top.sv
-      - rtl/pp_controller.sv
-      - rtl/quad_decoder.sv
-      - rtl/bus.sv
-      - rtl/pwm.sv
-      - rtl/servo_pwm.sv
-      - rtl/uart_tx_fifo.sv
-      - rtl/uart_rx_fifo.sv
-      - rtl/md_controller.sv
-      - rtl/pid_controller.sv
+      - rtl/core/pp_system.sv
     file_type: systemVerilogSource
   
   files_de23lite:

@@ -6,6 +6,9 @@ module obi_quad (
     input [1:0] quad_x_i,
     input [1:0] quad_y_i,
 
+    output logic [31:0] hw_quad_x,
+    output logic [31:0] hw_quad_y,
+
     input  logic        req_i,
     output logic        gnt_o,
     input  logic [31:0] addr_i,
@@ -27,6 +30,9 @@ logic [QuadCount-1:0]        hw_de, sw_we;
 logic [QuadCount-1:0] [31:0] sw_wd, hw_d;
 logic [QuadCount-1:0]        clr_quad;
 
+assign hw_d[QuadX] = hw_quad_x;
+assign hw_d[QuadY] = hw_quad_y;
+
 assign clr_quad[QuadX] = sw_we[QuadX] && (sw_wd[QuadX] == 32'h1);
 assign clr_quad[QuadY] = sw_we[QuadY] && (sw_wd[QuadY] == 32'h1);
 assign hw_de = ~clr_quad;
@@ -35,7 +41,7 @@ obi_reg #(
     .RegisterCount(QuadCount),
     .UsedAddrWidth(8),
     .RegAccess    ('{default: SwAccessW1C}) // might change to read-only and then use passthrough
-                                            // data to change on ANY non-zero write:w
+                                            // data to change on ANY non-zero write
  ) obi_reg (
     .clk     (clk),
     .rst_ni  (rst_ni),
@@ -64,7 +70,7 @@ quad_decoder u_quad_x (
     .clr_i        (clr_quad[QuadX]),
     .A_i          (quad_x_i[0]),
     .B_i          (quad_x_i[1]),
-    .tick_position(hw_d[QuadX])
+    .tick_position(hw_quad_x)
 );
 
 quad_decoder u_quad_y (
@@ -73,7 +79,7 @@ quad_decoder u_quad_y (
     .clr_i        (clr_quad[QuadY]),
     .A_i          (quad_y_i[0]),
     .B_i          (quad_y_i[1]),
-    .tick_position(hw_d[QuadY])
+    .tick_position(hw_quad_y)
 );
 
 

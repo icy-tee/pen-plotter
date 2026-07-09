@@ -1,12 +1,12 @@
 
 module bus #(
-    parameter int unsigned HostCount = 2,
+    parameter int unsigned HostCount = 1,
     parameter int unsigned DeviceCount = 7,
 
     parameter int unsigned BufferMax = 4 // must be a power-of-two
 ) (
-    input logic clk,
-    input logic rst_ni,
+    input clk,
+    input rst_ni,
 
     input  logic        host_req_i        [HostCount],
     output logic        host_gnt_o        [HostCount],
@@ -31,9 +31,9 @@ module bus #(
     input logic [31:0]  device_addr_base [DeviceCount],
     input logic [31:0]  device_addr_mask [DeviceCount]
 );
-    localparam int HostCountBits = $clog2(HostCount);
-    localparam int DeviceCountBits = $clog2(DeviceCount);
-    localparam int BufferCountBits = $clog2(BufferMax);
+    localparam int HostCountBits = HostCount > 1 ? $clog2(HostCount) : 1;
+    localparam int DeviceCountBits = DeviceCount > 1 ? $clog2(DeviceCount) : 1;
+    localparam int BufferCountBits = BufferMax > 1 ? $clog2(BufferMax) : 1;
 
     typedef struct packed {
         logic [HostCountBits-1:0] host;
