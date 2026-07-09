@@ -1,0 +1,17 @@
+CAPI=2:
+name: "icytee:rtl:obi_quad"
+description: "OBI quad peripheral"
+
+filesets:
+  rtl:
+    depend:
+      - icytee:rt:obi_reg
+    files:
+      - quad_decoder.sv
+      - obi_quad.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

@@ -8,9 +8,12 @@ module obi_reg
     input clk,
     input rst_ni,
 
-    input  logic [RegisterCount-1:0] hw_de,
-    input  logic [RegisterCount-1:0] [31:0] hw_d,
-    output logic [RegisterCount-1:0] [31:0] hw_q,
+    input  logic [RegisterCount-1:0] hw_de_i,
+    input  logic [RegisterCount-1:0] [31:0] hw_d_i,
+    output logic [RegisterCount-1:0] [31:0] hw_q_o,
+
+    output logic [RegisterCount-1:0] sw_we_o,
+    output logic [RegisterCount-1:0] [31:0] sw_wd_o,
 
     input  logic        req_i,
     output logic        gnt_o,
@@ -48,16 +51,17 @@ module obi_reg
                 .qe(),
                 .q(q[i]),
 
-                .de(hw_de[i]),
-                .d(hw_d[i]),
+                .de(hw_de_i[i]),
+                .d(hw_d_i[i]),
                 .ds(),
                 .qs()
             );
         end
     endgenerate
 
-
-    assign hw_q = q;
+    assign hw_q_o = q;
+    assign sw_we_o = we;
+    assign sw_wd_o = wd;
 
     assign reg_idx = addr_i[UsedAddrWidth-1:2];
     assign gnt_o = req_i;
