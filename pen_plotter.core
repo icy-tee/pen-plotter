@@ -26,7 +26,7 @@ filesets:
   files_verilator:
     files:
       - rtl/platform/top_verilator.sv: { file_type: systemVerilogSource }
-      - sim/verilator/sim_main.cpp: { file_type: cppSource }
+      - dv/verilator/sim_main.cpp: { file_type: cppSource }
 
   files_firmware:
     files:

@@ -136,6 +136,9 @@ assign cfg_device_addr_mask[Pid]   = PIDMask;
 assign cfg_device_addr_base[Timer] = TimerStart;
 assign cfg_device_addr_mask[Timer] = TimerMask;
 
+assign device_gnt[Ram] = device_req[Ram];
+assign device_err[Ram] = 1'b0;
+
 ram_2p #(
   .Depth      ( MemSize / 4 ),
   .MemInitFile( SRAMInitFile )

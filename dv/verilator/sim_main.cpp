@@ -152,29 +152,28 @@ int main(int argc, const char **argv) {
 
     Vtop_verilator *pptop = new Vtop_verilator{contextp};
     UARTDecoder uart_tx;
-    UARTInjector uart_rx;
-    QuadInjector quadx;
-    QuadInjector quady;
 
-    uart_rx.ticks_per_baud = 50000000 / 9600;
     uart_tx.ticks_per_baud = 50000000 / 9600;
+    pptop->uart_rx = 1;
 
     pptop->rst_n = 0;
     tick(pptop, 2);
     pptop->rst_n = 1;
     tick(pptop, 2);
 
-    char buf;
+    int received = 0;
     while (!contextp->gotFinish()) {
-        bool has_bool = false;
-        if (uart_rx.state == UARTInjector::IDLE) {
-            if (has_bool) { printf("injecting byte: 0x%02x\n", (uint8_t)buf); fflush(stdout); }
-        }
-
         uint8_t output;
         if (uart_tx.tick(pptop->uart_tx, output)) {
-            printf("received byte: %c\n", output);
+            printf("received byte: 0x%02x '%c'\n", output, output);
+            fflush(stdout);
+
+            if (++received >= 12) {
+                break;
+            }
         }
+
+        pptop->uart_rx = 1;
         tick(pptop, 1);
     }
 

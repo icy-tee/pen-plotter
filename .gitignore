@@ -14,6 +14,11 @@ rtl/platform/*.bak
 # fusesoc output
 build/
 
+sw/firmware.vmem
+sw/firmware.map
+sw/firmware.bin
+sw/firmware.elf
+
 # venv
 .venv/
 
