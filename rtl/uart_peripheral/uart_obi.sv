@@ -53,6 +53,7 @@ register_e wdata_selector;
 localparam int unsigned BufferLengthBits = $clog2(BufferLength);
 localparam int unsigned DataBits = 8;
 localparam int unsigned DataBitsLength = $clog2(DataBits);
+localparam logic [DataBitsLength-1:0] DataLastIdx = DataBitsLength'(DataBits - 1);
 
 logic [31:0] rx_baud_counter, tx_baud_counter, clks_per_bit, clks_per_bit_half;
 
@@ -214,6 +215,10 @@ always_ff @(posedge clk or negedge rst_ni) begin
                     end
                 endcase
             end
+            default: begin
+                rvalid_o <= '0;
+                device_state <= WAIT;
+            end
         endcase
     end
 end
@@ -250,7 +255,7 @@ always_ff @(posedge clk or negedge rst_ni) begin
             end
             DATA: begin
                 if (tx_baud) begin
-                    if (tx_data_count == DataBits - 1'b1)
+                    if (tx_data_count == DataLastIdx)
                         tx_state <= STOP;
                     else
                         tx_data_count <= tx_data_count + 1;
@@ -307,7 +312,7 @@ always_ff @(posedge clk or negedge rst_ni) begin
                     rx_collecting[rx_collecting_count] <= rx_sync[0];
                     rx_collecting_count <= rx_collecting_count + 1'b1;
 
-                    if (rx_collecting_count == (DataBits - 1'b1))
+                    if (rx_collecting_count == DataLastIdx)
                         rx_state <= STOP;
                 end
             end

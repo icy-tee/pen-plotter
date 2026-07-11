@@ -3,7 +3,7 @@ module obi_reg
     import prim_subreg_pkg::*; #(
     parameter int unsigned RegisterCount = 4,
     parameter int unsigned UsedAddrWidth = 8,
-    parameter sw_access_e RegAccess[RegisterCount] = '{default: SwAccessRW}
+    parameter logic [RegisterCount-1:0][2:0] RegAccess = {RegisterCount{SwAccessRW}}
 ) (
     input clk,
     input rst_ni,
@@ -26,7 +26,11 @@ module obi_reg
     output logic        err_o
 );
 
-    logic [UsedAddrWidth-1:2] reg_idx;
+    localparam int unsigned RegisterCountBits = RegisterCount > 1 ? $clog2(RegisterCount) : 1;
+
+    logic [UsedAddrWidth-1:0] trimmed_addr;
+    logic [RegisterCountBits-1:0] reg_idx;
+    logic [UsedAddrWidth-1:0] reg_word_idx;
     logic err;
 
     logic [RegisterCount-1:0] we;
@@ -40,10 +44,8 @@ module obi_reg
 
     generate
         for (i = 0; i < RegisterCount; i++) begin : gen_subregs
-            if (RegAccess[i] == SwAccessRC) begin : gen_check_access
-                $error("obi_reg does not support SwAccessRC");
-            end
-            prim_subreg #( .DW(32), .SwAccess(RegAccess[i]) ) u_reg (
+            localparam sw_access_e RegAccessI = sw_access_e'(RegAccess[i]);
+            prim_subreg #( .DW(32), .SwAccess(RegAccessI) ) u_reg (
                 .clk_i(clk),
                 .rst_ni(rst_ni),
                 .we(we[i]),
@@ -63,10 +65,12 @@ module obi_reg
     assign sw_we_o = we;
     assign sw_wd_o = wd;
 
-    assign reg_idx = addr_i[UsedAddrWidth-1:2];
+    assign trimmed_addr = addr_i[UsedAddrWidth-1:0];
+    assign reg_word_idx = trimmed_addr >> 2;
+    assign reg_idx = RegisterCountBits'(reg_word_idx);
     assign gnt_o = req_i;
     // byte masking is unavailable for writes
-    assign err = reg_idx > RegisterCount - 1 || (we_i && be_i != 4'hF);
+    assign err = reg_word_idx >= UsedAddrWidth'(RegisterCount) || (we_i && be_i != 4'hF);
 
     always_comb begin
         we = '0;

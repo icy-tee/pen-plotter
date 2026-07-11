@@ -62,7 +62,7 @@ endgenerate
 obi_reg #(
     .RegisterCount(PIDRegCount),
     .UsedAddrWidth(8),
-    .RegAccess    ('{default: SwAccessRW})
+    .RegAccess    ({PIDRegCount{SwAccessRW}})
  ) obi_reg (
     .clk     (clk),
     .rst_ni  (rst_ni),

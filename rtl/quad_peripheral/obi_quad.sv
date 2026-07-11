@@ -40,8 +40,7 @@ assign hw_de = ~clr_quad;
 obi_reg #(
     .RegisterCount(QuadCount),
     .UsedAddrWidth(8),
-    .RegAccess    ('{default: SwAccessW1C}) // might change to read-only and then use passthrough
-                                            // data to change on ANY non-zero write
+    .RegAccess    ({QuadCount{SwAccessW1C}})
  ) obi_reg (
     .clk     (clk),
     .rst_ni  (rst_ni),

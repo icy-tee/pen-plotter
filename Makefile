@@ -1,3 +1,13 @@
+.PHONY: verilator build-firmware
 
-simulate:
-	fusesoc --cores-root=. run --target=uart_obi_dv icytee:dv:obi_uart_tb
+MAKE := make
+FUSESOC := fusesoc
+
+
+all: verilator
+
+build-firmware: sw/main.c sw/startup.S
+	cd sw; $(MAKE) -f vmem.mk
+
+verilator: build-firmware
+	$(FUSESOC) --cores-root=. run --target=sim icytee:soc:plotter

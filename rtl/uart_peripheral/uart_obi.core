@@ -1,5 +1,5 @@
 CAPI=2:
-name: "icytee:ip:uart_obi"
+name: "icytee:rtl:obi_uart"
 description: "OBI UART peripheral"
 
 filesets:

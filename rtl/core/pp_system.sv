@@ -69,6 +69,10 @@ logic timer_irq;
 logic uart_irq;
 logic pid_irq;
 
+assign timer_irq = 1'b0;
+assign uart_irq = 1'b0;
+assign pid_irq = 1'b0;
+
 // Host signals.
 logic        host_req      [NrHosts];
 logic        host_gnt      [NrHosts];
@@ -201,9 +205,9 @@ ibex_top #(
     .test_en_i                (1'b0),
 
     .ram_cfg_icache_tag_i     ('0),
-    .ram_cfg_rsp_icache_tag_o ('0),
+    .ram_cfg_rsp_icache_tag_o (),
     .ram_cfg_icache_data_i    ('0),
-    .ram_cfg_rsp_icache_data_o('0),
+    .ram_cfg_rsp_icache_data_o(),
 
     .hart_id_i                (32'b0),
     .boot_addr_i              (32'h00100000),
@@ -239,7 +243,7 @@ ibex_top #(
     .scramble_nonce_i         ('0),
     .scramble_req_o           (),
 
-    .debug_req_i              (),
+    .debug_req_i              (1'b0),
     .crash_dump_o             (),
     .double_fault_seen_o      (),
 
@@ -249,7 +253,7 @@ ibex_top #(
     .alert_major_bus_o        (),
     .core_sleep_o             (),
 
-    .scan_rst_ni              (),
+    .scan_rst_ni              (1'b1),
     .lockstep_cmp_en_o        (),
 
     .data_req_shadow_o        (),
@@ -322,6 +326,51 @@ obi_pid u_pid (
     .rvalid_o(device_rvalid[Pid]),
     .rdata_o (device_rdata[Pid]),
     .err_o   (device_err[Pid])
+);
+
+obi_stub u_gpio_stub (
+    .clk     (clk),
+    .rst_ni  (rst_n),
+
+    .req_i   (device_req[Gpio]),
+    .gnt_o   (device_gnt[Gpio]),
+    .addr_i  (device_addr[Gpio]),
+    .we_i    (device_we[Gpio]),
+    .be_i    (device_be[Gpio]),
+    .wdata_i (device_wdata[Gpio]),
+    .rvalid_o(device_rvalid[Gpio]),
+    .rdata_o (device_rdata[Gpio]),
+    .err_o   (device_err[Gpio])
+);
+
+obi_stub u_pwm_stub (
+    .clk     (clk),
+    .rst_ni  (rst_n),
+
+    .req_i   (device_req[Pwm]),
+    .gnt_o   (device_gnt[Pwm]),
+    .addr_i  (device_addr[Pwm]),
+    .we_i    (device_we[Pwm]),
+    .be_i    (device_be[Pwm]),
+    .wdata_i (device_wdata[Pwm]),
+    .rvalid_o(device_rvalid[Pwm]),
+    .rdata_o (device_rdata[Pwm]),
+    .err_o   (device_err[Pwm])
+);
+
+obi_stub u_timer_stub (
+    .clk     (clk),
+    .rst_ni  (rst_n),
+
+    .req_i   (device_req[Timer]),
+    .gnt_o   (device_gnt[Timer]),
+    .addr_i  (device_addr[Timer]),
+    .we_i    (device_we[Timer]),
+    .be_i    (device_be[Timer]),
+    .wdata_i (device_wdata[Timer]),
+    .rvalid_o(device_rvalid[Timer]),
+    .rdata_o (device_rdata[Timer]),
+    .err_o   (device_err[Timer])
 );
 
 endmodule
