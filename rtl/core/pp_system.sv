@@ -11,10 +11,8 @@ module pp_system #(
     output uart_tx,
     output [1:0] motor_x,
     output [1:0] motor_y,
-    output servo
+    output pwm
 );
-
-assign servo = '0; // WILL BE REMOVED AND REPLACED WITH GENERAL PWM
 
 typedef enum {
     CoreD
@@ -69,7 +67,6 @@ logic timer_irq;
 logic uart_irq;
 logic pid_irq;
 
-assign timer_irq = 1'b0;
 assign uart_irq = 1'b0;
 assign pid_irq = 1'b0;
 
@@ -346,9 +343,13 @@ obi_stub u_gpio_stub (
     .err_o   (device_err[Gpio])
 );
 
-obi_stub u_pwm_stub (
+obi_pwm #(
+    .PWMCount(1)
+) u_pwm (
     .clk     (clk),
     .rst_ni  (rst_n),
+
+    .pwm_o   (pwm),
 
     .req_i   (device_req[Pwm]),
     .gnt_o   (device_gnt[Pwm]),
@@ -361,9 +362,11 @@ obi_stub u_pwm_stub (
     .err_o   (device_err[Pwm])
 );
 
-obi_stub u_timer_stub (
+obi_sys_timer u_timer (
     .clk     (clk),
     .rst_ni  (rst_n),
+
+    .irq_o(timer_irq),
 
     .req_i   (device_req[Timer]),
     .gnt_o   (device_gnt[Timer]),

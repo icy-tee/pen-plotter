@@ -14,17 +14,17 @@ module top_verilator #(
 );
 
 pp_system #(
-  .SRAMInitFile(SRAMInitFile)
- ) pp_system (
-  .clk    (clk),
-  .rst_n  (rst_n),
-  .quad_x (quad_x),
-  .quad_y (quad_y),
-  .uart_rx(uart_rx),
-  .uart_tx(uart_tx),
-  .motor_x(motor_x),
-  .motor_y(motor_y),
-  .servo  (servo)
+    .SRAMInitFile(SRAMInitFile)
+) pp_system (
+    .clk,
+    .rst_n,
+    .quad_x,
+    .quad_y,
+    .uart_rx,
+    .uart_tx,
+    .motor_x,
+    .motor_y,
+    .pwm(servo)
 );
 
 endmodule

@@ -6,7 +6,7 @@ OBJCOPY := $(RISCV_PREFIX)-objcopy
 OBJDUMP := $(RISCV_PREFIX)-objdump
 READELF := $(RISCV_PREFIX)-readelf
 
-MARCH := rv32imc
+MARCH := rv32imc_zicsr
 MABI := ilp32
 
 CFLAGS := \

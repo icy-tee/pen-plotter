@@ -3,7 +3,8 @@ module obi_reg
     import prim_subreg_pkg::*; #(
     parameter int unsigned RegisterCount = 4,
     parameter int unsigned UsedAddrWidth = 8,
-    parameter logic [RegisterCount-1:0][2:0] RegAccess = {RegisterCount{SwAccessRW}}
+    parameter logic [RegisterCount-1:0][2:0] RegAccess = {RegisterCount{SwAccessRW}},
+    parameter logic [RegisterCount-1:0][31:0] ResValue = {RegisterCount{32'b0}}
 ) (
     input clk,
     input rst_ni,
@@ -45,7 +46,7 @@ module obi_reg
     generate
         for (i = 0; i < RegisterCount; i++) begin : gen_subregs
             localparam sw_access_e RegAccessI = sw_access_e'(RegAccess[i]);
-            prim_subreg #( .DW(32), .SwAccess(RegAccessI) ) u_reg (
+            prim_subreg #( .DW(32), .SwAccess(RegAccessI), .RESVAL(ResValue[i]) ) u_reg (
                 .clk_i(clk),
                 .rst_ni(rst_ni),
                 .we(we[i]),

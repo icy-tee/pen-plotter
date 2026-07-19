@@ -1,0 +1,16 @@
+CAPI=2:
+name: "icytee:rtl:obi_sys_timer"
+description: "OBI peripheral for RISC-V timer interrupt"
+
+filesets:
+  rtl:
+    depend:
+      - icytee:rtl:obi_reg
+    files:
+      - obi_sys_timer.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

@@ -4,10 +4,12 @@ description: "SoC implementing features necessary to support closed-loop control
 filesets:
   rtl:
     depend:
+      - icytee:rtl:obi_sys_timer
+      - icytee:rtl:obi_bus
       - icytee:rtl:obi_pid
       - icytee:rtl:obi_uart
-      - icytee:rtl:obi_bus
       - icytee:rtl:obi_quad
+      - icytee:rtl:obi_pwm
       - lowrisc:ibex:ibex_top
       - lowrisc:prim:ram_2p
       - pulp:riscv:debug_module
@@ -27,6 +29,8 @@ filesets:
     files:
       - rtl/platform/top_verilator.sv: { file_type: systemVerilogSource }
       - dv/verilator/sim_main.cpp: { file_type: cppSource }
+      - dv/verilator/sim_uart.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/sim_quad.hpp: { file_type: cppSource, is_include_file: true }
 
   files_firmware:
     files:
