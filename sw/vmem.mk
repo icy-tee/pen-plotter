@@ -29,8 +29,8 @@ SRCS := startup.S main.c
 
 all: firmware.elf firmware.vmem firmware.bin
 
-firmware.elf: $(SRCS) link.ld
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SRCS) -o $@
+firmware.elf: $(SRCS) peripherals.h link.ld
+	$(CC) $(CFLAGS) $(LDFLAGS) $(SRCS) -I. -o $@
 
 firmware.vmem: firmware.bin
 	srec_cat $< -binary -offset 0x0000 -byte-swap 4 -o $@ -vmem
