@@ -1,0 +1,25 @@
+CAPI=2:
+name: "icytee:rtl:pp_system"
+description: "Module integrating IBEX core and peripherals"
+filesets:
+  rtl:
+    depend:
+      - icytee:rtl:obi_sys_timer
+      - icytee:rtl:obi_bus
+      - icytee:rtl:obi_pid
+      - icytee:rtl:obi_uart
+      - icytee:rtl:obi_quad
+      - icytee:rtl:obi_pwm
+      - lowrisc:ibex:ibex_top
+      - lowrisc:prim:ram_2p
+      - pulp:riscv:debug_module
+    files:
+      - obi_stub.sv
+      - ram_2p.sv
+      - pp_system.sv
+    file_type: systemVerilogSource
+
+targets:
+  default:
+    filesets:
+      - rtl

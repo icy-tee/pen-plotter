@@ -2,23 +2,10 @@ CAPI=2:
 name: "icytee:soc:plotter"
 description: "SoC implementing features necessary to support closed-loop control over a pen plotter"
 filesets:
-  rtl:
+  core:
     depend:
-      - icytee:rtl:obi_sys_timer
-      - icytee:rtl:obi_bus
-      - icytee:rtl:obi_pid
-      - icytee:rtl:obi_uart
-      - icytee:rtl:obi_quad
-      - icytee:rtl:obi_pwm
-      - lowrisc:ibex:ibex_top
-      - lowrisc:prim:ram_2p
-      - pulp:riscv:debug_module
-    files:
-      - rtl/core/obi_stub.sv
-      - rtl/core/ram_2p.sv
-      - rtl/core/pp_system.sv
-    file_type: systemVerilogSource
-  
+      - icytee:rtl:pp_system
+
   files_de23lite:
     files:
       - rtl/platform/top_de23lite.sv: { file_type: systemVerilogSource }
@@ -49,14 +36,11 @@ parameters:
     description: RAM initialization VMEM file
 
 targets:
-  default: &default_target
-    filesets:
-      - rtl
   synth:
-    <<: *default_target
     default_tool: quartus
-    filesets_append:
-      -  files_de23lite
+    filesets:
+      - core
+      - files_de23lite
     toplevel: top_de23lite
     tools:
       quartus:
@@ -66,29 +50,31 @@ targets:
      # - PRIM_DEFAULT_IMPL=
 
   sim:
-    <<: *default_target
-    default_tool: verilator
-    filesets_append:
+    filesets:
+      - core
       - files_verilator
       - files_firmware
     toplevel: top_verilator
     parameters:
       - PRIM_DEFAULT_IMPL=prim_pkg::ImplGeneric
       - SRAMInitFile=firmware.vmem
-    tools:
-      verilator:
-        mode: cc
-        verilator_options:
-          - '--trace'
-          - '--trace-fst'
-          - '--trace-structs'
-          - '--trace-params'
-          - '--trace-max-array 1024'
-          - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
-          - '-LDFLAGS "-pthread -lutil -lelf"'
-          - "-Wall"
-          - "-Wno-UNUSED"
-          - "-Wno-UNDRIVEN"
-          - "-Wno-DECLFILENAME"
-          - "-Wno-UNOPTFLAT"
-          - "--unroll-count 72"
+    flow: sim
+    flow_options:
+      tool: verilator
+      mode: cc
+      verilator_options:
+        - '--trace'
+        - '--trace-fst'
+        - '--trace-structs'
+        - '--trace-params'
+        - '--trace-max-array 1024'
+        - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
+        - '-LDFLAGS "-pthread -lutil -lelf"'
+        - "-Wall"
+        - "-Wno-UNUSED"
+        - "-Wno-PINCONNECTEMPTY"
+        - "-Wno-UNDRIVEN"
+        - "-Wno-DECLFILENAME"
+        - "-Wno-UNOPTFLAT"
+        - "--unroll-count 72"
+

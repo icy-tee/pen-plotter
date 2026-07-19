@@ -1,4 +1,4 @@
-.PHONY: sim build-firmware
+.PHONY: sim clean uvm-% build-firmware
 
 MAKE := make
 FUSESOC := fusesoc
@@ -10,8 +10,11 @@ all: sim
 sim: build-firmware
 	$(FUSESOC) --cores-root=. run --target=sim icytee:soc:plotter
 
-build-firmware: sw/main.c sw/startup.S
+build-firmware: sw/main.c sw/startup.S sw/peripherals.h
 	cd sw; $(MAKE) -f vmem.mk
 
 $(addprefix uvm-, $(UVM_TARGETS)): uvm-%: 
 	$(FUSESOC) --cores-root=. run icytee:dv:obi_$*_tb
+
+clean:
+	rm -rf build/
