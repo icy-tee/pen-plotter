@@ -1,6 +1,6 @@
 CAPI=2:
 name: "icytee:rtl:pp_pkg"
-description: "Pen plotter shared RTL package"
+description: "Configuration package mainly for memory implementation"
 
 filesets:
   rtl:

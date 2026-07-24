@@ -1,12 +1,8 @@
 
 
-import pp_pkg::i32_t;
-
-typedef enum logic [1:0] {
-    AB_ZERO, A_LEADS_B, AB_ONE, B_LEADS_A
-} quad_state_e;
-
-module quad_decoder(
+module quad_decoder
+    import pp_pkg::i32_t;
+(
     input clk,
     input rst_n,
     input clr_i,
@@ -15,6 +11,11 @@ module quad_decoder(
 
     output i32_t tick_position
 );
+
+    typedef enum logic [1:0] {
+        AB_ZERO, A_LEADS_B, AB_ONE, B_LEADS_A
+    } quad_state_e;
+
     logic [1:0] A_i_latch, B_i_latch;
 
     quad_state_e state;

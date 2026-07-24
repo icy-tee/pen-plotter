@@ -5,35 +5,42 @@ filesets:
   core:
     depend:
       - icytee:rtl:pp_system
-
   files_de23lite:
     files:
       - rtl/platform/top_de23lite.sv: { file_type: systemVerilogSource }
       - ip/reset_release.ip: { file_type: IP }
+      - constraints/top_de23lite.sdc: {file_type: SDC }
       - constraints/de23lite_assignments.tcl: {file_type: tclSource }
-
   files_verilator:
     files:
       - rtl/platform/top_verilator.sv: { file_type: systemVerilogSource }
       - dv/verilator/sim_main.cpp: { file_type: cppSource }
       - dv/verilator/sim_uart.hpp: { file_type: cppSource, is_include_file: true }
       - dv/verilator/sim_quad.hpp: { file_type: cppSource, is_include_file: true }
-
   files_firmware:
     files:
       - sw/firmware.vmem:
           file_type: user
           copyto: firmware.vmem
+  files_firmware_mif:
+    files:
+      - sw/firmware.mif:
+          file_type: user
+          copyto: firmware.mif
 
 parameters:
-  PRIM_DEFAULT_IMPL:
+  SYNTHESIS:
+    datatype: int
+    paramtype: vlogdefine
+    description: Synthesis flag
+  RAM_IMPL:
     datatype: str
     paramtype: vlogdefine
     description: Primtives implementation to use
   SRAMInitFile:
     datatype: str
     paramtype: vlogparam
-    description: RAM initialization VMEM file
+    description: RAM initialization MIF file
 
 targets:
   synth:
@@ -41,13 +48,16 @@ targets:
     filesets:
       - core
       - files_de23lite
+      - files_firmware_mif
     toplevel: top_de23lite
     tools:
       quartus:
         family: "Agilex 3"
         device: "A3CZ135BB18AE7S" 
-    #parameters:
-     # - PRIM_DEFAULT_IMPL=
+    parameters:
+      - SYNTHESIS=1
+      - RAM_IMPL=pp_pkg::ImplQuartus
+      - SRAMInitFile=firmware.mif
 
   sim:
     filesets:
@@ -56,7 +66,7 @@ targets:
       - files_firmware
     toplevel: top_verilator
     parameters:
-      - PRIM_DEFAULT_IMPL=prim_pkg::ImplGeneric
+      - RAM_IMPL=pp_pkg::ImplGeneric
       - SRAMInitFile=firmware.vmem
     flow: sim
     flow_options:

@@ -4,6 +4,7 @@ description: "Module integrating IBEX core and peripherals"
 filesets:
   rtl:
     depend:
+      - icytee:rtl:pp_pkg
       - icytee:rtl:obi_sys_timer
       - icytee:rtl:obi_bus
       - icytee:rtl:obi_pid
@@ -15,7 +16,8 @@ filesets:
       - pulp:riscv:debug_module
     files:
       - obi_stub.sv
-      - ram_2p.sv
+      - mem/prim_altera_ram_2p.sv
+      - mem/ram_2p.sv
       - pp_system.sv
     file_type: systemVerilogSource
 

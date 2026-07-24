@@ -101,6 +101,9 @@ logic [31:0] core_instr_rdata;
 logic        mem_instr_req;
 logic [31:0] mem_instr_rdata;
 
+logic [31:0] cfg_device_addr_base [NrDevices];
+logic [31:0] cfg_device_addr_mask [NrDevices];
+
 assign mem_instr_req = core_instr_req &
         ((core_instr_addr & cfg_device_addr_mask[Ram]) == cfg_device_addr_base[Ram]);
 assign core_instr_gnt = mem_instr_req;
@@ -115,8 +118,6 @@ always @(posedge clk or negedge rst_n) begin
 end
 
 
-logic [31:0] cfg_device_addr_base [NrDevices];
-logic [31:0] cfg_device_addr_mask [NrDevices];
 
 assign cfg_device_addr_base[Ram]   = MemStart;
 assign cfg_device_addr_mask[Ram]   = MemMask;

@@ -1,9 +1,7 @@
 
-// verilator lint_off IMPORTSTAR
-import pp_pkg::*;
-// verilator lint_on IMPORTSTAR
-
-module pid_controller #(
+module pid_controller
+    import pp_pkg::*;
+#(
     int CLOCK_RATE = 50_000_000,
     int MIN_PERIOD_FOR_STABILITY = 100_000,
     int BASE_PWM = 179 // =  255 * 0.70

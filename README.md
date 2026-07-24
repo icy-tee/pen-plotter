@@ -60,8 +60,12 @@ the `QUAD_X` tick count every 5,000,000 clock cycles, or 100 ms at 50 MHz.
 
 ### Synthesis
 
-Synthesis is now in progress, currently the only blocker is that the `ram_2p` does not yet target a synthesizable
-RAM component in Quartus.
+Synthesis now runs for Quartus targeting the DE23-Lite:
+
+  `make quartus`
+
+runs the `fusesoc` setup for a Quartus project before it uses the Quartus shell programs to start the flow.
+While Synthesis runs and timing is met for 50 MHz, it has not yet been tested.
 
 ## Writing Programs
 

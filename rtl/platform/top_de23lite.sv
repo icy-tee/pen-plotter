@@ -1,48 +1,50 @@
 
-module top_de23lite(
-      input              CLOCK0_50,
-      input              CLOCK1_50,
+module top_de23lite #(
+    parameter SRAMInitFile = ""
+) (
+    input              CLOCK0_50,
+    input              CLOCK1_50,
 
-      input    [ 3: 0]   KEY, //BUTTON is Low-Active
-      input    [ 9: 0]   SW,
-      output   [ 9: 0]   LEDR, //LED is Low-Active
+    input    [ 3: 0]   KEY, //BUTTON is Low-Active
+    input    [ 9: 0]   SW,
+    output   [ 9: 0]   LEDR, //LED is Low-Active
 
-      output   [ 6: 0]   HEX0,
-      output   [ 6: 0]   HEX1,
-      output   [ 6: 0]   HEX2,
-      output   [ 6: 0]   HEX3,
-      output   [ 6: 0]   HEX4,
-      output   [ 6: 0]   HEX5,
+    output   [ 6: 0]   HEX0,
+    output   [ 6: 0]   HEX1,
+    output   [ 6: 0]   HEX2,
+    output   [ 6: 0]   HEX3,
+    output   [ 6: 0]   HEX4,
+    output   [ 6: 0]   HEX5,
 
-      output             DRAM_CLK,
-      output             DRAM_CKE,
-      output   [12: 0]   DRAM_ADDR,
-      output   [ 1: 0]   DRAM_BA,
-      inout    [31: 0]   DRAM_DQ,
-      output             DRAM_CS_n,
-      output             DRAM_WE_n,
-      output             DRAM_CAS_n,
-      output             DRAM_RAS_n,
-      output   [ 3: 0]   DRAM_DQM,
+    output             DRAM_CLK,
+    output             DRAM_CKE,
+    output   [12: 0]   DRAM_ADDR,
+    output   [ 1: 0]   DRAM_BA,
+    inout    [31: 0]   DRAM_DQ,
+    output             DRAM_CS_n,
+    output             DRAM_WE_n,
+    output             DRAM_CAS_n,
+    output             DRAM_RAS_n,
+    output   [ 3: 0]   DRAM_DQM,
 
-      inout              HDMI_LRCLK,
-      inout              HDMI_MCLK,
-      inout              HDMI_SCLK,
-      output             HDMI_TX_CLK,
-      output             HDMI_TX_HS,
-      output             HDMI_TX_VS,
-      output   [23: 0]   HDMI_TX_D,
-      output             HDMI_TX_DE,
-      input              HDMI_TX_INT,
-      inout              HDMI_I2S0,
+    inout              HDMI_LRCLK,
+    inout              HDMI_MCLK,
+    inout              HDMI_SCLK,
+    output             HDMI_TX_CLK,
+    output             HDMI_TX_HS,
+    output             HDMI_TX_VS,
+    output   [23: 0]   HDMI_TX_D,
+    output             HDMI_TX_DE,
+    input              HDMI_TX_INT,
+    inout              HDMI_I2S0,
 
-      inout              FPGA_I2C_SCL,
-      inout              FPGA_I2C_SDA,
+    inout              FPGA_I2C_SCL,
+    inout              FPGA_I2C_SDA,
 
-      output             FPGA_UART_TX,
-      input              FPGA_UART_RX,
+    output             FPGA_UART_TX,
+    input              FPGA_UART_RX,
 
-      inout    [35: 0]   GPIO_D
+    inout    [35: 0]   GPIO_D
 );
 
 wire [1:0] motor_x_w, motor_y_w;
@@ -51,7 +53,7 @@ wire servo;
 wire config_done;
 
 // LEDs off
-assign LEDR      = 10'b1;
+assign LEDR = '1;
 
 // 7-segment displays off (active low segments)
 assign HEX0 = 7'h7F;
@@ -71,7 +73,7 @@ assign DRAM_RAS_n = 1'b1;
 assign DRAM_ADDR  = 13'b0;
 assign DRAM_BA    = 2'b0;
 assign DRAM_DQM   = 4'hF;
-assign DRAM_DQ    = 32'bz;
+assign DRAM_DQ    = 32'dz;
 
 // HDMI disabled
 assign HDMI_TX_CLK = 1'b0;
@@ -111,22 +113,24 @@ assign GPIO_D[12] = 1'bz;
 assign GPIO_D[14] = 1'bz;
 assign GPIO_D[16] = 1'bz;
 assign GPIO_D[18] = 1'bz;
-assign GPIO_D[35: 20] = 18'dz;
+assign GPIO_D[35: 20] = 16'dz;
 
 reset_release u_reset_release(
-  .ninit_done(config_done)
+    .ninit_done(config_done)
 );
 
-pp_top u0_top(
-      .clk(CLOCK0_50),
-      .rst_n(KEY[0] & ~config_done),
-      .uart_rx(FPGA_UART_RX),
-      .uart_tx(FPGA_UART_TX),
-      .quad_x(quad_x),
-      .quad_y(quad_y),
-      .motor_x(motor_x_w),
-      .motor_y(motor_y_w),
-      .servo(servo)
+pp_system #(
+    .SRAMInitFile(SRAMInitFile)
+ ) pp_system (
+    .clk    (CLOCK0_50),
+    .rst_n  (KEY[0 & ~config_done]),
+    .quad_x (quad_x),
+    .quad_y (quad_y),
+    .uart_rx(FPGA_UART_RX),
+    .uart_tx(FPGA_UART_TX),
+    .motor_x(motor_x_w),
+    .motor_y(motor_y_w),
+    .pwm    (servo)
 );
 
 endmodule

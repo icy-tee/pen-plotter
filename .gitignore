@@ -15,6 +15,7 @@ rtl/platform/*.bak
 build/
 
 sw/firmware.vmem
+sw/firmware.mif
 sw/firmware.map
 sw/firmware.bin
 sw/firmware.elf

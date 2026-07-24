@@ -1,10 +1,8 @@
 // motor controller for DRV8833
 
-// verilator lint_off IMPORTSTAR
-import pp_pkg::*;
-// verilator lint_on IMPORTSTAR
-
-module md_controller #(
+module md_controller
+    import pp_pkg::*;
+#(
     int CLOCK_RATE = 50_000_000,
     int PWM_FREQ = 25_000
 )(

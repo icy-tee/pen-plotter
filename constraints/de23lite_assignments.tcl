@@ -399,3 +399,4 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[32] -entity 
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[33] -entity top_de23lite
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[34] -entity top_de23lite
 set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to GPIO_D[35] -entity top_de23lite
+
