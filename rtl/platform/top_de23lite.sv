@@ -123,7 +123,7 @@ pp_system #(
     .SRAMInitFile(SRAMInitFile)
  ) pp_system (
     .clk    (CLOCK0_50),
-    .rst_n  (KEY[0 & ~config_done]),
+    .rst_n  (KEY[0] && !config_done),
     .quad_x (quad_x),
     .quad_y (quad_y),
     .uart_rx(FPGA_UART_RX),

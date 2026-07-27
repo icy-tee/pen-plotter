@@ -48,7 +48,7 @@ typedef struct {
 
 #define TIMER_CONTROL_ENABLE 0x1
 #define TIMER_CONTROL_IRQ_ENABLE 0x2
-#define TIMER_PERIOD_TICKS 5000000ull
+#define TIMER_PERIOD_TICKS 500000ull
 
 #define UART ((volatile UARTRegisterLayout *)0x80000000)
 #define PWM ((volatile PWMRegisterLayout *)0x80002000)

@@ -1,7 +1,7 @@
 .PHONY: sim clean uvm-% build-firmware quartus-setup quartus
 
 MAKE := make
-FUSESOC := ./.venv/bin/fusesoc
+FUSESOC := fusesoc
 
 QUARTUS_BUILD := build/plotter_quartus
 QUARTUS_PROJECT := icytee_soc_plotter_0

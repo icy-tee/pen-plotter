@@ -1,9 +1,11 @@
 #ifndef SIM_UART_H
 #define SIM_UART_H
 
+#include <functional>
 #include <stdint.h>
 
 enum UARTState { IDLE, START, DATA, STOP } ;
+using UARTCallback = std::function<void(uint8_t byte)>;
 
 struct UARTInjector {
     UARTState state;
@@ -48,9 +50,10 @@ struct UARTInjector {
 
 struct UARTDecoder {
     UARTState state = IDLE;
+    UARTCallback notify;
     int ticks = 0, val = 0, bit = 0, ticks_per_baud = 5208;
 
-    bool tick(uint8_t tx_in, uint8_t &tx_data) {
+    void tick(uint8_t tx_in) {
         ticks++;
         switch(state) {
             case IDLE:
@@ -73,13 +76,11 @@ struct UARTDecoder {
                 break;
             case STOP:
                 if (ticks == ticks_per_baud - 1) {
-                    tx_data = val;
                     state = IDLE;
-                    return true;
+                    notify(val);
                 }
                 break;
         }
-        return false;
     }
 };
 

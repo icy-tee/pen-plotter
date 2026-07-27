@@ -1,24 +1,12 @@
 
 #include <Vtop_verilator.h>
 
+#include <cstdint>
 #include <verilated.h>
 #include <stdio.h>
 #include <fcntl.h>
 
-#include "sim_quad.hpp"
-#include "sim_uart.hpp"
-
-static size_t global_cycles = 0;
-
-void tick(Vtop_verilator *instance, int cycles) {
-    for (int i = 0; i < cycles; i++) {
-        instance->clk = 0;
-        instance->eval();
-        instance->clk = 1;
-        instance->eval();
-    }
-    global_cycles += cycles;
-}
+#include "sim_pp_system.hpp"
 
 int main(int argc, const char **argv) { // usage: [name] [--cycles N]
     size_t max_cycles = 6000000;
@@ -40,48 +28,28 @@ int main(int argc, const char **argv) { // usage: [name] [--cycles N]
     VerilatedContext *contextp = new VerilatedContext;
     contextp->commandArgs(argc, argv);
 
-    Vtop_verilator *pptop = new Vtop_verilator{contextp};
+    {
+        PPSystem system(contextp);
 
-    UARTDecoder uart_tx;
-    UARTInjector uart_rx;
-    QuadInjector quadx;
-    QuadInjector quady;
+        system.set_servo_decode_cb([](size_t period, size_t on_duration) {
+            float duty = (float)(on_duration) / period;
+            printf("period: %zu, on: %zu, duty: %f\n", period, on_duration, duty);
+            fflush(stdout);
+        });
 
-    uart_rx.ticks_per_baud = 50000000 / 9600;
-    uart_tx.ticks_per_baud = 50000000 / 9600;
-
-    pptop->clk = 0;
-    pptop->rst_n = 1;
-    pptop->eval();
-    pptop->rst_n = 0;
-    pptop->eval();
-    tick(pptop, 2);
-    pptop->rst_n = 1;
-    tick(pptop, 2);
-
-    char buf;
-    while (global_cycles < max_cycles) {
-
-        // bool has_bool = false;
-        // if (uart_rx.state == UARTState::START) {
-            // has_bool = true;
-            // if (has_bool) { printf("injecting byte: 0x%02x\n", (uint8_t)'A'); fflush(stdout); }
-        // }
-
-        uint8_t output;
-        if (uart_tx.tick(pptop->uart_tx, output)) {
+        system.set_uart_decode_cb([](uint8_t output) {
             printf("%c", output);
             fflush(stdout);
+        });
+
+        system.reset();
+
+        size_t cycles = 0;
+        for (size_t cycles = 0; cycles < max_cycles; cycles++) {
+            system.tick();
         }
-
-        quadx.tick_forward(2000);
-        pptop->quad_x = (quadx.A() << 1) | (quadx.B() << 0);
-
-        
-        tick(pptop, 1);
     }
 
-    delete pptop;
     delete contextp;
 
     return 0;

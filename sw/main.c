@@ -77,13 +77,19 @@ void machine_timer_handler(void) {
 
 int main(void) {
     UART->BAUD = 2;
-    uart_puts("Hello World!\n");
+    uart_puts("Hello World!\r\n");
     timer_init();
+
+    PWM->PERIOD = 20000;
+    PWM->WIDTH = 2000;
 
     while (1) {
         if (print) {
+            uart_puts("X: ");
             uart_putnumber(QUAD->X);
-            uart_putc('\n');
+            uart_puts(", Y: ");
+            uart_putnumber(QUAD->Y);
+            uart_puts("\r\n");
             print = 0;
         }
     }
