@@ -97,6 +97,13 @@ int main(void) {
             uart_puts("\r\n");
             print = 0;
         }
+        if ((UART->STATUS & UART_RX_EMPTY) != UART_RX_EMPTY) {
+            uart_putc(UART->RX);
+            uart_putc('\n');
+            
+        } else {
+            uart_puts("nothing\n");
+        }
     }
 }
 

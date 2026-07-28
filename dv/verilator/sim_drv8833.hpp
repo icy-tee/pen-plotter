@@ -4,9 +4,6 @@
 #include <cstring>
 #include <functional>
 #include <cstdint>
-#include <memory>
-
-#define CHANNEL_COUNT 2
 
 enum DRV8833Mode {
     FORWARD = 0, // IN1: 1, IN2: 0
@@ -27,9 +24,10 @@ using DRV8833Callback = std::function<void(DRV8833Info)>;
 
 struct DRV8833Decoder {
 
-    static const size_t cycles_for_period = 2000; // known bc `pwm.sv` uses default of 25 KHz for PWM freq and 50 MHz is Sys freq
+    static constexpr size_t ChannelCount = 2;
+    size_t cycles_for_period = 2'000; // known bc `pwm.sv` uses default of 25 KHz for PWM freq and 50 MHz is Sys freq
 
-    static inline DRV8833Info percentage_of(size_t channel[DRV8833Mode::LENGTH]) {
+    inline DRV8833Info info_from(const size_t channel[DRV8833Mode::LENGTH]) {
         return {
             (double)channel[DRV8833Mode::FORWARD] / cycles_for_period,
             (double)channel[DRV8833Mode::BACKWARD] / cycles_for_period,
@@ -39,15 +37,22 @@ struct DRV8833Decoder {
     }
 
     size_t cycles = 0;
-    size_t channel[CHANNEL_COUNT][DRV8833Mode::LENGTH] = {  };
+    size_t channel[ChannelCount][DRV8833Mode::LENGTH] = {  };
 
-    DRV8833Callback notify[CHANNEL_COUNT] = {  };
+    DRV8833Callback notify[ChannelCount] = {  };
+
+    void reset(void) {
+        cycles = 0;
+        for (size_t j = 0; j < ChannelCount; j++) {
+            memset(channel[j], 0, sizeof(channel[j]));
+        }
+    }
 
     void tick(uint8_t in1, uint8_t in2) { // a -> IN1 IN2, b -> IN3 IN4
 
-        uint8_t in[CHANNEL_COUNT] = {in1, in2};
+        uint8_t in[ChannelCount] = {in1, in2};
 
-        for (size_t j = 0; j < CHANNEL_COUNT; j++) {
+        for (size_t j = 0; j < ChannelCount; j++) {
             uint8_t state =  in[j] & 0b11;
 
             switch (state) {
@@ -69,8 +74,8 @@ struct DRV8833Decoder {
         if (cycles + 1 == cycles_for_period) {
             cycles = 0;
 
-            for (size_t j = 0; j < CHANNEL_COUNT; j++) {
-                if (notify[j]) notify[j](percentage_of(channel[j]));
+            for (size_t j = 0; j < ChannelCount; j++) {
+                if (notify[j]) notify[j](info_from(channel[j]));
 
                 memset(channel[j], 0, sizeof(channel[j]));
             }

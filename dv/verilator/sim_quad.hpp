@@ -1,11 +1,17 @@
 #ifndef SIM_QUAD_H
 #define SIM_QUAD_H
 
-#include <stdint.h>
+#include <cstddef>
+#include <cstdint>
 
 struct QuadInjector {
-    enum STATE { AB_ZERO, AB, BA, AB_ONE } state = AB_ZERO;
-    int ticks = 0, ticks_for_next = 0;
+    enum State { AB_ZERO, AB, BA, AB_ONE } state = AB_ZERO;
+    size_t ticks = 0;
+
+    void reset(void) {
+        state = AB_ZERO;
+        ticks = 0;
+    }
 
     void tick_forward(int ticks_for_next ) {
         if (++ticks >= ticks_for_next) {
@@ -33,7 +39,7 @@ struct QuadInjector {
         }
     }
 
-    uint8_t A() {
+    uint8_t A(void) {
         switch (state) {
             case AB_ZERO: return 0;
             case AB: return 1;
@@ -43,7 +49,7 @@ struct QuadInjector {
         return 0;
     }
 
-    uint8_t B() {
+    uint8_t B(void) {
         switch (state) {
             case AB_ZERO: return 0;
             case BA: return 1;
