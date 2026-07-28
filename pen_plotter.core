@@ -16,6 +16,7 @@ filesets:
       - rtl/platform/top_verilator.sv: { file_type: systemVerilogSource }
       - dv/verilator/sim_main.cpp: { file_type: cppSource }
       - dv/verilator/sim_uart.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/sim_drv8833.hpp: { file_type: cppSource, is_include_file: true }
       - dv/verilator/sim_pwm.hpp: { file_type: cppSource, is_include_file: true }
       - dv/verilator/sim_pp_system.hpp: { file_type: cppSource, is_include_file: true }
       - dv/verilator/sim_quad.hpp: { file_type: cppSource, is_include_file: true }

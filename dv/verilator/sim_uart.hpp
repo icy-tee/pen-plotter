@@ -77,7 +77,7 @@ struct UARTDecoder {
             case STOP:
                 if (ticks == ticks_per_baud - 1) {
                     state = IDLE;
-                    notify(val);
+                    if (notify) notify(val);
                 }
                 break;
         }
