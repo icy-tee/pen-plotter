@@ -11,28 +11,12 @@ static void uart_putc(char c) {
    UART->TX.ONE_WIDTH = (uint8_t)c;
 }
 
-static void uart_puts(const char *str) {
-   for (int i = 0; str[i] != '\0'; i++) {
-       uart_putc(str[i]);
-   }
-}
-
-static void uart_putnumber(int32_t num) {
-    if (num < 0) {
-        uart_putc('-');
-        num = -num;
+static void uart_putw(uint32_t w) {
+    while ((UART->STATUS & UART_TX_FULL)) {
+        asm volatile ("nop");
     }
-    
-    int divisor = 1;
-    while (num / divisor >= 10)
-        divisor *= 10;
-    while (divisor > 0) {
-        char digit = num / divisor + '0';
-        uart_putc(digit);
 
-        num = num % divisor;
-        divisor /= 10;
-    }
+    UART->TX.FOUR_WIDTH = w;
 }
 
 static uint64_t timer_read_mtime(void) {
@@ -74,35 +58,60 @@ void machine_timer_handler(void) {
     timer_write_mtimecmp(timer_read_mtime() + TIMER_PERIOD_TICKS);
 }
 
-
 int main(void) {
     UART->BAUD = 2;
-    PID_X->KP = (uint32_t)1<<17;
-    PID_X->KD = (uint32_t)1<<17;
-    PID_X->RS = (uint32_t)7;
-    PID_X->SET_POINT = 1000;
-    uart_puts("Hello World!\r\n");
     timer_init();
 
-    PWM->PERIOD = 20000;
-    PWM->WIDTH = 20000;
-
+    uint8_t command[6] = { 0 };
+    uint8_t len = 0;
+    uint8_t finished = 0;
+    uint8_t streaming = 0;
 
     while (1) {
-        if (print) {
-            uart_puts("X: ");
-            uart_putnumber(QUAD->X);
-            uart_puts(", Y: ");
-            uart_putnumber(QUAD->Y);
-            uart_puts("\r\n");
+        if ((UART->STATUS & UART_RX_EMPTY) != UART_RX_EMPTY) {
+            command[len++] = UART->RX;
+
+            if (len == 1) {
+                finished = (command[0] == 0 || command[0] == 1 || command[0] == 4);
+            }
+            if (len == 6) {
+                finished = 1;
+            }
+        }
+
+        if (streaming && print) {
+            uart_putc(1);
+            uart_putw(QUAD->X);
+            uart_putc(2);
+            uart_putw(QUAD->Y);
             print = 0;
         }
-        if ((UART->STATUS & UART_RX_EMPTY) != UART_RX_EMPTY) {
-            uart_putc(UART->RX);
-            uart_putc('\n');
-            
-        } else {
-            uart_puts("nothing\n");
+
+        if (finished) {
+            switch(command[0]) {
+                case 0:
+                    uart_putc(0);
+                    uart_putc(3);
+                    break;
+                case 1:
+                    // reset
+                    break;
+                case 2:
+                    switch(command[1]) {
+                        case 0: PID_X->SET_POINT = *(uint32_t*)(&command[2]); break;
+                        case 1: PID_Y->SET_POINT = *(uint32_t*)(&command[2]); break;
+                        case 2: PID_X->KP = *(uint32_t*)(&command[2]); PID_Y->KP = *(uint32_t*)(&command[2]); break;
+                        case 3: PID_X->KD = *(uint32_t*)(&command[2]); PID_Y->KD = *(uint32_t*)(&command[2]); break;
+                        case 4: PID_X->RS = *(uint32_t*)(&command[2]); PID_Y->RS = *(uint32_t*)(&command[2]); break;
+                        case 5: break;
+                    }
+                    break;
+                case 4:
+                    streaming = !streaming;
+                    break;
+            }
+            len = 0;
+            finished = 0;
         }
     }
 }
