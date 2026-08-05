@@ -13,6 +13,8 @@ rtl/platform/*.bak
 
 # fusesoc output
 build/
+# ppc program
+dv/verilator/ppc
 
 sw/firmware.vmem
 sw/firmware.mif
