@@ -1,5 +1,5 @@
-#ifndef SIM_DRV8833_H
-#define SIM_DRV8833_H
+#ifndef SIM_DRV8833_HPP
+#define SIM_DRV8833_HPP
 
 #include <cstring>
 #include <functional>
@@ -20,7 +20,7 @@ struct DRV8833Info {
     double brk_ratio;
 };
 
-using DRV8833Callback = std::function<void(DRV8833Info)>;
+using DRV8833Callback = std::function<void(const DRV8833Info&)>;
 
 struct DRV8833Decoder {
 
@@ -38,6 +38,7 @@ struct DRV8833Decoder {
 
     size_t cycles = 0;
     size_t channel[ChannelCount][DRV8833Mode::LENGTH] = {  };
+    DRV8833Info current_info[ChannelCount] = {  };
 
     DRV8833Callback notify[ChannelCount] = {  };
 
@@ -75,8 +76,8 @@ struct DRV8833Decoder {
             cycles = 0;
 
             for (size_t j = 0; j < ChannelCount; j++) {
-                if (notify[j]) notify[j](info_from(channel[j]));
-
+                current_info[j] = info_from(channel[j]);
+                if (notify[j]) notify[j](current_info[j]);
                 memset(channel[j], 0, sizeof(channel[j]));
             }
         } else {
@@ -86,4 +87,4 @@ struct DRV8833Decoder {
     
 };
 
-#endif
+#endif // SIM_DRV8833_HPP

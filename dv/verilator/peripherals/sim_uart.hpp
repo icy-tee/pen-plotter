@@ -1,5 +1,5 @@
-#ifndef SIM_UART_H
-#define SIM_UART_H
+#ifndef SIM_UART_HPP
+#define SIM_UART_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -111,4 +111,4 @@ struct UARTDecoder {
     }
 };
 
-#endif
+#endif // SIM_UART_HPP

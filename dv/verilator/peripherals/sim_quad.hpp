@@ -1,5 +1,5 @@
-#ifndef SIM_QUAD_H
-#define SIM_QUAD_H
+#ifndef SIM_QUAD_HPP
+#define SIM_QUAD_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -13,7 +13,7 @@ struct QuadInjector {
         ticks = 0;
     }
 
-    void tick_forward(int ticks_for_next ) {
+    void increase_ticks(int ticks_for_next ) {
         if (++ticks >= ticks_for_next) {
             ticks = 0;
 
@@ -26,7 +26,7 @@ struct QuadInjector {
         }
     }
     
-    void tick_backward(int ticks_for_next) {
+    void decrease_ticks(int ticks_for_next) {
         if (++ticks >= ticks_for_next) {
             ticks = 0;
 
@@ -60,4 +60,4 @@ struct QuadInjector {
     }
 };
 
-#endif
+#endif // SIM_QUAD_HPP

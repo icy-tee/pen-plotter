@@ -68,7 +68,6 @@ logic uart_irq;
 logic pid_irq;
 
 assign uart_irq = 1'b0;
-assign pid_irq = 1'b0;
 
 // Host signals.
 logic        host_req      [NrHosts];
@@ -236,7 +235,7 @@ ibex_top #(
     .irq_software_i           ('0),
     .irq_timer_i              (timer_irq),
     .irq_external_i           (1'b0),
-    .irq_fast_i               ({13'b0, pid_irq, uart_irq}),
+    .irq_fast_i               ({13'b0, uart_irq, pid_irq}),
     .irq_nm_i                 (1'b0),
 
     .scramble_key_valid_i     ('0),
@@ -317,6 +316,8 @@ obi_pid u_pid (
 
     .motor_x_o(motor_x),
     .motor_y_o(motor_y),
+
+    .irq_o(pid_irq),
 
     .req_i   (device_req[Pid]),
     .gnt_o   (device_gnt[Pid]),

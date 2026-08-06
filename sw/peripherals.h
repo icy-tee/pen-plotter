@@ -37,6 +37,12 @@ typedef struct {
 } PIDRegisterLayout;
 
 typedef struct {
+    volatile uint32_t STATUS;
+    PIDRegisterLayout X;
+    PIDRegisterLayout Y;
+} PIDPeripheralLayout;
+
+typedef struct {
     volatile uint32_t PERIOD;
     volatile uint32_t WIDTH;
 } PWMRegisterLayout;
@@ -50,11 +56,13 @@ typedef struct {
 #define TIMER_CONTROL_IRQ_ENABLE 0x2
 #define TIMER_PERIOD_TICKS 500000ull
 
+#define PID_INT_XSTABLE_bm (1u<<0)
+#define PID_INT_YSTABLE_bm (1u<<1)
+
 #define UART ((volatile UARTRegisterLayout *)0x80000000)
 #define PWM ((volatile PWMRegisterLayout *)0x80002000)
 #define TIMER ((volatile TimerRegisterLayout *)0x80003000)
-#define PID_X ((volatile PIDRegisterLayout *)0x80004000)
-#define PID_Y ((volatile PIDRegisterLayout *)0x80004010)
+#define PID ((volatile PIDPeripheralLayout *)0x80004000)
 #define QUAD ((volatile QuadRegisterLayout*)0x80004400)
 
 #endif // PERIPHERALS_H

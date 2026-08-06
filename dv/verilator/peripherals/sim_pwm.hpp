@@ -1,5 +1,5 @@
-#ifndef SIM_PWM_H
-#define SIM_PWM_H
+#ifndef SIM_PWM_HPP
+#define SIM_PWM_HPP
 
 #include <cstddef>
 #include <cstdint>
@@ -88,4 +88,4 @@ struct PWMDecoder {
 };
  
 
-#endif
+#endif // SIM_PWM_HPP

@@ -1,17 +1,17 @@
 
 #include <Vtop_verilator.h>
 #include <Vtop_verilator__Dpi.h>
-
 #include <verilated.h>
+#include "svdpi.h"
+
 #include <cstdio>
 #include <deque>
 #include <cstring>
-
+#include <cstdlib>
 #include <fcntl.h>
 
-#include "sim_drv8833.hpp"
 #include "sim_pp_system.hpp"
-#include "sim_pwm.hpp"
+#include "sim_mmio.hpp"
 
 struct Settings {
   size_t max_cycles = 6'000'000;
@@ -20,12 +20,17 @@ struct Settings {
 };
 
 struct Status {
-    std::deque<std::string> &buf;
+    std::deque<std::string> buf {  };
+    std::deque<OBITransaction> pending_transactions {  };
+    std::deque<OBITransaction> transactions {  };
+    uint64_t next_transaction_sequence = 0;
     DRV8833Info x {  };
     DRV8833Info y {  };
+    bool pid_irq = false;
     size_t pwm_period = 0;
     double pwm_duty = 0.0;
-};
+} status;
+
 
 void print_status(const Settings &stgs, const Status &sts) {
     printf("\033[2J");
@@ -33,21 +38,60 @@ void print_status(const Settings &stgs, const Status &sts) {
     printf("pwm: p%zu, d%.0f%%\n", sts.pwm_period, sts.pwm_duty);
     printf("x: fwd%.2f bwd%.2f cst%.2f brk%.2f\n", sts.x.fwd_ratio, sts.x.bwd_ratio, sts.x.cst_ratio, sts.x.brk_ratio);
     printf("y: fwd%.2f bwd%.2f cst%.2f brk%.2f\n", sts.y.fwd_ratio, sts.y.bwd_ratio, sts.y.cst_ratio, sts.y.brk_ratio);
+    printf("pid irq: %s\n", sts.pid_irq ? "on" : "off");
 
     if (!stgs.piped) {
         printf("uart:\n");
-        for (std::string &line : sts.buf) {
+        for (std::string const &line : sts.buf) {
             printf("%s\n", line.c_str());
         }
+    }
+
+    printf("obi:\n");
+    for (const OBITransaction &tr : sts.transactions) {
+        printf(
+            "#%llu %s @ 0x%08X: ",
+            static_cast<unsigned long long>(tr.sequence),
+            to_string(classify_address(tr.addr)),
+            tr.addr
+        );
+        if (tr.we) printf("write 0x%.8X (0x%.1X)", tr.wdata, tr.be);
+        else printf("read 0x%.8X (0x%.1X)", tr.rdata, tr.be);
+        printf("\n");
     }
 }
 
 void host_gnt_received(const svBitVecVal *addr, const svBitVecVal *wdata, svBit we, const svBitVecVal *be) {
+    status.pending_transactions.push_back({
+        status.next_transaction_sequence++,
+        addr[0],
+        wdata[0],
+        we != 0,
+        static_cast<uint8_t>(be[0] & 0xF),
+        0,
+        false,
+    });
 }
 
 void host_rvalid_received(const svBitVecVal *rdata, svBit err) {
+    if (status.pending_transactions.empty()) {
+        std::fprintf(stderr, "Received an OBI response without a pending request\n");
+        std::abort();
+    }
+
+    OBITransaction completed = status.pending_transactions.front();
+    status.pending_transactions.pop_front();
+    completed.rdata = rdata[0];
+    completed.err = err != 0;
+
+    status.transactions.push_back(completed);
+    if (status.transactions.size() > 20)
+        status.transactions.pop_front();
 }
 
+void pid_irq_received(svBit sts) {
+    status.pid_irq = sts;
+}
 
 int main(int argc, const char **argv) { // usage: [name] [--cycles N]
 
@@ -73,29 +117,27 @@ int main(int argc, const char **argv) { // usage: [name] [--cycles N]
         settings.tx_pipe = open("/tmp/uart_tx", O_RDWR | O_NONBLOCK); // so they dont block
         settings.rx_pipe = open("/tmp/uart_rx", O_RDWR | O_NONBLOCK);
 
-        printf("rx_pipe=%d, tx_pipe=%d\n", settings.rx_pipe, settings.tx_pipe);
+        if (settings.rx_pipe == -1 || settings.tx_pipe == -1) {
+            fprintf(stderr, "error: opening pipes failed {rx_pipe=%d,tx_pipe=%d}\n", settings.rx_pipe, settings.tx_pipe);
+            exit(-1);
+        }
     }
-    
+
     VerilatedContext context;
     context.commandArgs(argc, argv);
 
     PPSystem system(&context);
-
-
-    std::deque<std::string> uart_lines;
     std::string uart_tmp;
-
-    Status sts { uart_lines };
 
     system.set_servo_decode_cb([&](PWMInfo info) {
         switch (info.kind) {
             case PWMKind::PERIODIC:
-                sts.pwm_period = info.period;
-                sts.pwm_duty = info.duty * 100;
+                status.pwm_period = info.period;
+                status.pwm_duty = info.duty * 100;
                 break;
             case PWMKind::STABLE:
-                sts.pwm_period = 0;
-                sts.pwm_duty = info.duty * 100;
+                status.pwm_period = 0;
+                status.pwm_duty = info.duty * 100;
                 break;
             case PWMKind::INVALID:
                 break;
@@ -103,23 +145,22 @@ int main(int argc, const char **argv) { // usage: [name] [--cycles N]
     });
 
     system.set_drv8833_ch_decode_cb(0, [&](DRV8833Info info) {
-        sts.x = info;
+        status.x = info;
     });
     
     system.set_drv8833_ch_decode_cb(1, [&](DRV8833Info info) {
-        sts.y = info;
+        status.y = info;
     });
-
 
     system.set_uart_decode_cb([&](uint8_t output) {
 
         if (!settings.piped) {
             if (output == '\n') {
-                uart_lines.push_back(uart_tmp);
+                status.buf.push_back(uart_tmp);
                 uart_tmp.clear();
 
-                if (uart_lines.size() > 32) {
-                    uart_lines.pop_front();
+                if (status.buf.size() > 32) {
+                    status.buf.pop_front();
                 }
             } else if (output != '\r') {
                 uart_tmp.push_back(output);
@@ -133,14 +174,14 @@ int main(int argc, const char **argv) { // usage: [name] [--cycles N]
 
     char buf = 0;
     for (size_t cycles = 0; cycles < settings.max_cycles; cycles++) {
-        if (read(settings.rx_pipe, &buf, 1) > 0) {
+        if (settings.piped && read(settings.rx_pipe, &buf, 1) > 0) {
             system.uart_enqueue(buf);
         }
         
         system.tick();
 
         if (cycles % 10'000 == 0) {
-            print_status(settings, sts);
+            print_status(settings, status);
         }
     }
 

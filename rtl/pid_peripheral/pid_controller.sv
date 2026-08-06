@@ -75,8 +75,8 @@ module pid_controller
 
         motor_duty_o = val < 9'd255 ? val[7:0] : 8'd255;
 
-        if (response < 0) motor_dir_o = FORWARD;
-        else if (response > 0)  motor_dir_o = REVERSE;
+        if (response < 0) motor_dir_o = REVERSE;
+        else if (response > 0)  motor_dir_o = FORWARD;
         else begin
             motor_dir_o = COAST;
             motor_duty_o = 0;

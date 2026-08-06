@@ -10,10 +10,10 @@
 #include <utility>
 #include <queue>
 
-#include "sim_quad.hpp"
-#include "sim_drv8833.hpp"
-#include "sim_pwm.hpp"
-#include "sim_uart.hpp"
+#include "peripherals/sim_quad.hpp"
+#include "peripherals/sim_drv8833.hpp"
+#include "peripherals/sim_pwm.hpp"
+#include "peripherals/sim_uart.hpp"
 
 class PPSystem {
 public:
@@ -85,6 +85,17 @@ public:
         instance->uart_rx = uart_rx_injector.tick();
 
         servo.tick(instance->servo);
+
+        double fwdx = drv8833.current_info[0].fwd_ratio;
+        double bwdx = drv8833.current_info[0].bwd_ratio;
+        double fwdy = drv8833.current_info[1].fwd_ratio;
+        double bwdy = drv8833.current_info[1].bwd_ratio;
+
+        if (fwdx > 0.3) quadx.increase_ticks(2000.0 / fwdx);
+        if (bwdx > 0.3) quadx.decrease_ticks(2000.0 / bwdx);
+
+        if (fwdy > 0.3) quady.increase_ticks(2000.0 / fwdy);
+        if (bwdy > 0.3) quady.decrease_ticks(2000.0 / bwdy);
 
         instance->quad_x = (quadx.A() << 0 | quadx.B() << 1);
         instance->quad_y = (quady.A() << 0 | quady.B() << 1);
