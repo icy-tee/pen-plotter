@@ -1,21 +1,28 @@
 
 #lsp
 .clangd
+compile_flags.txt
+.slang/
+.svlangserver/
 veridian.yml
+.rules.verible_lint
 
 # rtl backups
 rtl/*.bak
 rtl/platform/*.bak
 
-# quartus output
-syn/output_files/
-syn/dni/
-syn/ip/RESET_RELEASE/
-syn/ip/.qsys_edit/
-syn/qdb/
+# fusesoc output
+build/
+# ppc program
+dv/verilator/ppc
 
-# verilator output
-sim/obj_dir/
-sim/ppcsender
-sim/rect
+sw/firmware.vmem
+sw/firmware.mif
+sw/firmware.map
+sw/firmware.bin
+sw/firmware.elf
 
+# venv
+.venv/
+
+.ignore

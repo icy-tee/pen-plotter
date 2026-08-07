@@ -1,0 +1,17 @@
+CAPI=2:
+name: "icytee:rtl:obi_pwm"
+description: "OBI pwm peripheral"
+
+filesets:
+  rtl:
+    depend:
+      - icytee:rtl:obi_reg
+    files:
+      - prgm_pwm.sv
+      - obi_pwm.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

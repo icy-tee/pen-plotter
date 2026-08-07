@@ -1,0 +1,39 @@
+CAPI=2:
+name: "icytee:dv:obi_reg_tb"
+description: "Testbench for the OBI reg peripheral helper"
+
+filesets:
+  obi_reg_dv:
+    depend:
+      - icytee:rtl:obi_reg
+      - icytee:dv:obi_reg_env
+    files: 
+      - tests/obi_reg_test.svh: { is_include_file: true }
+      - tests/obi_reg_tests_pkg.sv
+      - tb/obi_reg_tb_top.sv
+    file_type: systemVerilogSource
+
+parameters:
+  UVM_TESTNAME:
+    datatype: str
+    paramtype: plusarg
+    description: UVM test to run
+
+targets:
+  default: &default_target
+    filesets:
+      - obi_reg_dv
+    default_tool: modelsim
+    toplevel: obi_reg_tb_top
+    parameters:
+      - UVM_TESTNAME=obi_reg_test
+    tools:
+      modelsim:
+        vlog_options:
+          - -timescale=1ns/1ps
+          - +incdir+$::env(QUESTA_HOME)/verilog_src/uvm-1.2/src/
+          - -L $::env(QUESTA_HOME)/uvm-1.2
+        vsim_options:
+          - -voptargs=+acc
+          - -L $$QUESTA_HOME/uvm-1.2
+          - -sv_lib $$QUESTA_HOME/uvm-1.2/linux_x86_64/uvm_dpi

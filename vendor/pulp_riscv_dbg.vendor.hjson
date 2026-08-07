@@ -1,0 +1,16 @@
+{
+	name: "pulp_riscv_dbg",
+	target_dir: "pulp_riscv_dbg",
+
+	upstream: {
+		url: "https://github.com/pulp-platform/riscv-dbg",
+		rev: "master",
+	}
+
+	exclude_from_upstream: [
+		"src/dm_top.sv",
+		"src_files.yml",
+
+		"tb/.clang-format",
+	]
+}

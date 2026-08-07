@@ -1,0 +1,21 @@
+CAPI=2:
+name: "icytee:dv:uart_agent"
+description: "UVM agent for the UART protocol (no parity bit)"
+filesets:
+  dv:
+    depend:
+      - icytee:ip:uart_obi
+    files:
+      - uart_if.sv
+      - uart_item.svh:         { is_include_file: true }
+      - uart_cfg.svh:          { is_include_file: true }
+      - uart_driver.svh:       { is_include_file: true }
+      - uart_monitor.svh:      { is_include_file: true }
+      - uart_agent.svh:        { is_include_file: true }
+      - seq/base_uart_seq.svh: { is_include_file: true }
+      - uart_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv

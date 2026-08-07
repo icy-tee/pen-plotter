@@ -1,0 +1,20 @@
+CAPI=2:
+name: "icytee:rtl:obi_pid"
+description: "OBI PID peripheral"
+
+filesets:
+  rtl:
+    depend:
+      - icytee:rtl:obi_reg
+      - icytee:rtl:pp_pkg
+      - icytee:rtl:pwm
+    files:
+      - pid_controller.sv
+      - md_controller.sv
+      - obi_pid.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

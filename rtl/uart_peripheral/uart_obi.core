@@ -1,0 +1,15 @@
+CAPI=2:
+name: "icytee:rtl:obi_uart"
+description: "OBI UART peripheral"
+
+filesets:
+  rtl:
+    files:
+      - uart_obi_pkg.sv
+      - uart_obi.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

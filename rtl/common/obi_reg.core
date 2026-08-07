@@ -1,0 +1,16 @@
+CAPI=2:
+name: "icytee:rtl:obi_reg"
+description: "OBI register peripheral helper"
+
+filesets:
+  rtl:
+    depend:
+      - lowrisc:prim:subreg
+    files:
+      - obi_reg.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

@@ -1,0 +1,94 @@
+CAPI=2:
+name: "icytee:soc:plotter"
+description: "SoC implementing features necessary to support closed-loop control over a pen plotter"
+filesets:
+  core:
+    depend:
+      - icytee:rtl:pp_system
+  files_de23lite:
+    files:
+      - rtl/platform/top_de23lite.sv: { file_type: systemVerilogSource }
+      - ip/reset_release.ip: { file_type: IP }
+      - constraints/top_de23lite.sdc: {file_type: SDC }
+      - constraints/de23lite_assignments.tcl: {file_type: tclSource }
+  files_verilator:
+    files:
+      - rtl/platform/top_verilator.sv: { file_type: systemVerilogSource }
+      - dv/verilator/sim_main.cpp: { file_type: cppSource }
+      - dv/verilator/peripherals/sim_uart.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/peripherals/sim_drv8833.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/peripherals/sim_pwm.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/peripherals/sim_quad.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/sim_mmio.hpp: { file_type: cppSource, is_include_file: true }
+      - dv/verilator/sim_pp_system.hpp: { file_type: cppSource, is_include_file: true }
+  files_firmware:
+    files:
+      - sw/firmware.vmem:
+          file_type: user
+          copyto: firmware.vmem
+  files_firmware_mif:
+    files:
+      - sw/firmware.mif:
+          file_type: user
+          copyto: firmware.mif
+
+parameters:
+  SYNTHESIS:
+    datatype: int
+    paramtype: vlogdefine
+    description: Synthesis flag
+  RAM_IMPL:
+    datatype: str
+    paramtype: vlogdefine
+    description: Primtives implementation to use
+  SRAMInitFile:
+    datatype: str
+    paramtype: vlogparam
+    description: RAM initialization MIF file
+
+targets:
+  synth:
+    default_tool: quartus
+    filesets:
+      - core
+      - files_de23lite
+      - files_firmware_mif
+    toplevel: top_de23lite
+    tools:
+      quartus:
+        family: "Agilex 3"
+        device: "A3CZ135BB18AE7S" 
+    parameters:
+      - SYNTHESIS=1
+      - RAM_IMPL=pp_pkg::ImplQuartus
+      - SRAMInitFile=firmware.mif
+
+  sim:
+    filesets:
+      - core
+      - files_verilator
+      - files_firmware
+    toplevel: top_verilator
+    parameters:
+      - RAM_IMPL=pp_pkg::ImplGeneric
+      - SRAMInitFile=firmware.vmem
+    flow: sim
+    flow_options:
+      tool: verilator
+      mode: cc
+      verilator_options:
+        - '--trace'
+        - '--trace-fst'
+        - '--trace-structs'
+        - '--trace-params'
+        - '--trace-max-array 1024'
+        - '-CFLAGS "-std=c++14 -Wall -DVM_TRACE_FMT_FST -DTOPLEVEL_NAME=top_verilator"'
+        - '-LDFLAGS "-pthread -lutil -lelf"'
+        - "-Wall"
+        - "-Wno-UNUSED"
+        - "-Wno-PINCONNECTEMPTY"
+        - "-Wno-UNDRIVEN"
+        - "-Wno-DECLFILENAME"
+        - "-Wno-UNOPTFLAT"
+        - "--unroll-count 72"
+

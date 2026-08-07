@@ -1,6 +1,6 @@
 # Pen Plotter
 
-This is the synthesized hardware and later firmware for a closed-loop pen plotter. It uses SystemVerilog for the HDL, Verilator for simulation and Quartus Prime for Synthesis.
+This is a WIP RISC-V SoC to be used to control a closed-loop pen plotter.
 
 [Project Plan and Goals](https://icy-tee.github.io/blog/pen-plotter/phase1_rw/)
 
@@ -15,34 +15,80 @@ This is the synthesized hardware and later firmware for a closed-loop pen plotte
 
 ```
   rtl/ - the source files for the controller and surrounding hardware
-  rtl/platform - the top-level files for different platforms (Quartus for now)
-  sim/ - simulation for pp_top.sv
-  syn/ - quartus files
-  syn/ip - ip required for quartus top-level module
+  rtl/common/ - RTL modules commonly used in peripherals
+  rtl/core/ - core SoC files such as `bus`, `pp_system`, and `ram_2p`
+  sw/ - linker config, MMIO definitions and a demo program
+  constraints/ - TCL, SDC, and pin-planning constraints
+  dv/uvm/ - UVM environments containing OBI, UART, and register agents plus peripheral TBs
+  dv/verilator/ - simulation harness
+  ip/ - IP files
+  vendor/ - contains Ibex, lowRISC IP, and the PULP RISC-V debug core
 ```
 
 ## State
 
-Currently, it is a simple controller for my pen plotter rig that can drive all the inputs of a DRV8833 to get movement and read the output of quadrature encoders from the JGA25-371.
-It has 4 working commands:
-```
-  STS - Status: sends OK packet with controller version
-  RST - Reset: resets the quadrature counters and the setpoint values, keeps constants
-  STR - Stream: toggles the streaming mode that sends position packets
-  SET $REG: 1 byte $WORD: 4 bytes - Set: sets the corresponding register to the bytes sent with it.
-```
+Integration and verification are in progress. The UVM environment currently has basic tests for the
+`obi_reg`, `uart_obi`, and `bus` modules. These tests are still coverage-light, but they run in
+QuestaSim without errors.
 
-It currently has 5 4-byte long registers: `setpoint_x`, `setpoint_y`, `Kp`, `Kd`, and `sample_rate`. There will be
-per-axis proportional constants and the sample rate will likely become hardcoded but for now its for quicker testing.
+Recently, all peripherals except GPIO have been implemented, and a Verilator simulation
+has been added.
 
-## Simulation
+## Running
 
-Simulating the current state of the project is straightforward. Ensure Verilator is installed and run the Makefile. The simulation itself should be crossplatform but `ppcsender` is unix-based and for Windows would
-require a port for the named pipes.
+### Prerequisites
 
-`./ppcsender.c` is the program that parses user commands into their byte representations (in LE) and sends them over USB for actual use, or over named pipes for the simulation.
-It runs with either `act [dev]` where the default is /dev/TTYUSB0 or `sim [read] [write]` that defaults to 'uart_rx' and 'uart_tx' respectively.
+- `fusesoc` and its dependencies are required for build orchestration and can be installed with:
+  ```sh
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r python_requirements.txt
+  ```
+- a RISC-V 32-bit compiler and `srec_cat` are required to build and prepare the firmware for simulation
 
-## Synthesis
+### Verification
 
-Synthesis has been done on Quartus Prime Pro targetting the Agilex 3 series (Specifically, the Agilex 3 A3CZ135BB18AE7S, as I am using the DE23-Lite). Though, the pin assignments would need to be reconfigured. 
+Currently, QuestaSim is the only supported verification simulator.
+The current UVM testbenches can be run directly with `fusesoc`:
+  - `fusesoc --cores-root=. run icytee:dv:obi_uart_tb`
+  - `fusesoc --cores-root=. run icytee:dv:obi_reg_tb`
+  - `fusesoc --cores-root=. run icytee:dv:obi_bus_tb`
+
+They can also be run via `make` using the `uvm-uart`, `uvm-reg`, or `uvm-bus` rules.
+
+### Simulation
+
+A Verilator simulation can be run through `make sim`, which also compiles and updates the program files when
+their tracked inputs change.
+
+The simulation accepts a `--cycles N` flag to set its run length. When omitted, the default is 6,000,000
+cycles, which allows the first timer interrupt to occur.
+
+Currently, the simulation runs a program that uses the `timer`, `uart`, and `quad` peripherals to report
+the `QUAD_X` tick count every 5,000,000 clock cycles, or 100 ms at 50 MHz.
+
+### Synthesis
+
+Synthesis now runs for Quartus targeting the DE23-Lite:
+
+  `make quartus`
+
+runs the `fusesoc` setup for a Quartus project before it uses the Quartus shell programs to start the flow.
+While Synthesis runs and timing is met for 50 MHz, it has not yet been tested.
+
+## Writing Programs
+
+For now, the organization of the peripherals in memory is subject to change. For example, the QUAD peripheral
+will likely be moved into the PID peripheral as they are closely related. Ordering may change as well.
+
+|Peripheral|Memory Location|
+|----------|---------------|
+|   UART   |  0x8000_0000  |
+|GPIO(stub)|  0x8000_1000  |
+|   PWM    |  0x8000_2000  |
+|   TIMER  |  0x8000_3000  |
+|   PID    |  0x8000_4000  |
+|   QUAD   |  0x8000_4400  |
+
+`sw/peripherals.h` defines the peripheral register layouts used by firmware. The timer is currently
+configurable, and its configuration functions are used by the `sw/main.c` demo.

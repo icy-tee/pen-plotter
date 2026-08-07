@@ -1,0 +1,14 @@
+CAPI=2:
+name: "icytee:rtl:pp_pkg"
+description: "Configuration package mainly for memory implementation"
+
+filesets:
+  rtl:
+    files:
+      - pp_pkg.sv
+    file_type: systemVerilogSource
+
+targets:
+  default: &default_target
+    filesets:
+      - rtl

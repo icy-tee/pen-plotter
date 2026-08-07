@@ -1,0 +1,19 @@
+CAPI=2:
+name: "icytee:dv:obi_bus_env"
+description: "UVM environment for the OBI bus helper"
+filesets:
+  dv:
+    depend:
+      - icytee:dv:obi_agent
+      - icytee:dv:obi_device_agent
+    files:
+      - obi_bus_env_cfg.svh:          { is_include_file: true }
+      - obi_bus_scoreboard.svh:       { is_include_file: true }
+      - obi_bus_env.svh:              { is_include_file: true }
+      - seq/obi_bus_seq.svh:          { is_include_file: true }
+      - obi_bus_env_pkg.sv
+    file_type: systemVerilogSource
+targets:
+  default: &default_target
+    filesets:
+      - dv
