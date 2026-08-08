@@ -1,6 +1,7 @@
 .PHONY: sim clean uvm-% build-firmware quartus-setup quartus
 
 MAKE := make
+GCC := gcc
 FUSESOC := fusesoc
 
 QUARTUS_BUILD := build/plotter_quartus
@@ -10,8 +11,12 @@ UVM_TARGETS := uart reg bus
 
 all: sim
 
-sim: build-firmware
+sim: build-dir build-firmware
+	$(GCC) -o build/ppcsender dv/verilator/ppcsender.c
 	$(FUSESOC) --cores-root=. run --target=sim icytee:soc:plotter
+
+build-dir:
+	mkdir build
 
 build-firmware: sw/main.c sw/startup.S sw/peripherals.h
 	cd sw; $(MAKE) -f vmem.mk
