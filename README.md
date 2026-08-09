@@ -18,7 +18,7 @@ It uses the [Ibex](https://github.com/lowrisc/ibex) core connected over an OBI i
 
 ## Quickstart
 
-Ensure Verilator, `srec_cat` and a RISC-V 32-bit toolchain ([lowrisc's](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20251111-1)) are installed.
+Ensure Verilator, `srec_cat`, and the [lowRISC RV32 toolchain release `20260224-1`](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20260224-1) are installed. The firmware build expects the toolchain executables (`riscv32-unknown-elf-clang`, `riscv32-unknown-elf-objcopy`, `riscv32-unknown-elf-objdump`, and `riscv32-unknown-elf-readelf`) to be available on `PATH`.
 
 ```sh
   git clone https://github.com/icy-tee/pen-plotter.git
@@ -28,21 +28,17 @@ Ensure Verilator, `srec_cat` and a RISC-V 32-bit toolchain ([lowrisc's](https://
   source .venv/bin/activate
   pip install -r python_requirements.txt
 
-  make sim
-
-  mkfifo /tmp/uart_rx /tmp/uart_tx # only needed if pipes don't exist
-
-  ./build/icytee_soc_plotter_0/sim/Vtop_verilator --piped --cycles 5000000000
+  make run-interactive
 ```
 
 In another shell:
 ```console
-  $ ./build/ppcsender sim /tmp/uart_rx /tmp/uart_tx
-  setKp 0.5
-  setKd 0.5
-  setRd 7
-  go 1000 1000
-  quit
+  $ make run-ppcsender
+  >setKp 0.5
+  >setKd 0.5
+  >setRd 7
+  >go 1000 1000
+  >quit
 ```
 
 The Verilator model simulates motor movement and quadrature feedback and is configured via the `ppcsender`. Upon reaching the `SETPOINT` it sends a `STABLE` packet to the `ppcsender`.
@@ -53,8 +49,8 @@ The Verilator model simulates motor movement and quadrature feedback and is conf
 
 |Flow|Platform|Requirements|
 |----|----|--------|
-|Verilator Simulation|Linux| Verilator, [RISC-V 32-bit toolchain](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20251111-1), `srec_cat`|
-|Quartus Synthesis|Linux| Quartus Prime Pro 26.1, [RISC-V 32-bit toolchain](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20251111-1), `srec_cat`|
+|Verilator Simulation|Linux|Verilator, [lowRISC RV32 toolchain `20260224-1`](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20260224-1) providing `riscv32-unknown-elf-*` tools, `srec_cat`|
+|Quartus Synthesis|Linux|Quartus Prime Pro 25.3, [lowRISC RV32 toolchain `20260224-1`](https://github.com/lowRISC/lowrisc-toolchains/releases/tag/20260224-1) providing `riscv32-unknown-elf-*` tools, `srec_cat`|
 |UVM|Linux| Questa|
 
 
@@ -103,18 +99,17 @@ Synthesis runs successfully and the result is functional, currently mimicking th
 
 ## Status
 
-|Part|Status|
-|----|------|
-|Ibex SoC|Synthesis and simulation are functional|
-|UART|Implemented; still needs interrupts; subject to change|
-|Quadrature decoding|Implemented|
-|PWM|Implemented|
-|GPIO|Not Implemented|
-|Closed-loop Control|Proportional and derivative terms implemented; integral planned; subject to change|
-|Timer|Implemented with interrupt|
-|Verilator system simulation|Functional|
-|UVM verification|Partially done; obi, uart, register agents exist and are used to lightly test `bus`, `obi_uart` and `obi_reg`.
-|Quartus Synthesis|Functional|
+|Component|Status|Verification|
+|---------|------|------------|
+|Ibex SoC integration|Complete for current architecture|Boots firmware in Verilator; synthesizes and runs  on the DE23-Lite|
+|OBI interconnect|Implemented|Very basic randomized UVM read/write tests across mapped devices|
+|UART|Implemented with polling; module is subject to change|UVM TX/RX tests; functional in its use in the Verilator simulation and on DE23-Lite|
+|Quadrature decoding|Implemented for both axes|Firmware simulation streams back correct tick counts for simulated quadrature pulses|
+|Closed-loop control|Proportional and derivative terms implemented; integral term planned|Verilator model decodes motor stimulus and simulates quadrature; correct behavior in Verilator and functional on hardware|
+|Servo PWM|Implemented with programmable period and pulse width|Decoded by the Verilator model and exercised on hardware|
+|System timer|Implemented with interrupt support|Exercised by firmware in Verilator|
+|GPIO|Stub only|Not tested|
+|UVM infrastructure|OBI host/device, UART, and register agents implemented|Currently provides light coverage of `bus`, `uart_obi`, and `obi_reg`|
 
 
 Currently, the pen plotter controller is functional and has been shown to run a program mimicking the initial controller's protocol though now in software instead of hardware. It makes use of Ibex's fast interrupts for the `stable_x` and `stable_y` events and its timer interrupt for streaming the quadrature ticks.
